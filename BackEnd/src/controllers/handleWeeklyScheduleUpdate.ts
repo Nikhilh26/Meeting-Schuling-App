@@ -33,7 +33,7 @@ export async function handleWeeklyScheduleUpdate(ctx: Context) {
 
         let todaysDate = new Date().toISOString().split('T')[0]
         const { MON, TUE, WED, THU, FRI, SAT, SUN } = payload;
-
+        console.log(MON)
         if (isValidToken === false) {
             return ctx.json({
                 "Message": "Invalid Token",
@@ -41,6 +41,7 @@ export async function handleWeeklyScheduleUpdate(ctx: Context) {
             })
         }
 
+        console.log(payload);
         const res = await db.update(userWeeklyAvailability).set({
             updatedAt: todaysDate,
             MONfrom: MON[2] ? MON[0] : '00:00:00',

@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { useRouter } from 'next/navigation'
 
+export const daysofWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
 export default function page({ params }) {
     const router = useRouter();
     const [date, setDate] = useState(new Date());
@@ -12,22 +14,34 @@ export default function page({ params }) {
 
     useEffect(() => {
 
-        if (a.current) {
-            console.log(params.slug[0])
-            fetch('https://back-end.nikhilharisinghani26.workers.dev/getAvailabilityOnADay', {
-                method: "POST",
-                body: JSON.stringify({
-                    slug: params.slug[0],
-                    date
-                })
-            }).then(async (data) => await data.json()).then((data) => {
-                // setAdj(adj);
-                console.log(data?.returnPayload)
-                setAdj(data?.returnPayload)
-            }).catch((err) => {
-                console.log(err)
-            })
+        if (a.current && date) {
+            try {
 
+                console.log(date);
+
+                let day = daysofWeek[date.getDay()];
+                const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+
+                fetch(' https://back-end.nikhilharisinghani26.workers.dev/getAvailabilityOnADay', {
+
+                    method: "POST",
+                    body: JSON.stringify({
+                        slug: params.slug[0],
+                        day,
+                        formattedDate
+                    })
+
+                }).then(async (data) => await data.json()).then((data) => {
+
+                    console.log(data);
+                    setAdj(data?.returnPayload)
+
+                }).catch((err) => {
+                    console.log(err)
+                })
+            } catch (error) {
+                console.log(error);
+            }
         }
 
     }, [date])

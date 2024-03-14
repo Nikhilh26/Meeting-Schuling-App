@@ -4,6 +4,8 @@ import { userBookedSlots, userWeeklyAvailability, users } from "../db/schema";
 import { and, eq } from "drizzle-orm";
 import { daysofWeek } from "./handleWeeklyScheduleUpdate";
 
+type DayOfWeek = typeof daysofWeek[number];
+
 function generateIntervals(startTime: any, endTime: any, intervalMinutes = 30) {
 
     const intervals = [];
@@ -62,25 +64,24 @@ function getNonIntersectingIntervals(intervals1: any, intervals2: any) {
 
 export async function handleAvailabilityOfDay(ctx: Context) {
     try {
-        const { slug, date }: { slug: string, date: string } = await ctx.req.json();
-        const inputDate = new Date(date);
-        let day = daysofWeek[inputDate.getDay()];
-        const formattedDate = `${inputDate.getFullYear()}-${(inputDate.getMonth() + 1).toString().padStart(2, '0')}-${inputDate.getDate().toString().padStart(2, '0')}`;
-        console.log(slug);
-        console.log(date);
+        const { slug, day, formattedDate }: { slug: string, day: DayOfWeek, formattedDate: string } = await ctx.req.json();
+
+        console.log(formattedDate);
+        console.log(day);
+
         const data = await db.select().from(users).innerJoin(userWeeklyAvailability,
             eq(userWeeklyAvailability.userId, users.userId)).where(eq(users.slug, slug));
 
         if (data[0].userWeeklyAvailability[`${day}from`] === data[0].userWeeklyAvailability[`${day}till`]) {
-
+            console.log([]);
             return ctx.json({
                 "success": true,
                 "returnPayload": []
             })
-
         }
 
         const allIntervals = generateIntervals(data[0].userWeeklyAvailability[`${day}from`], data[0].userWeeklyAvailability[`${day}till`]);
+
         const bookedIntervals = await db.select().from(users).innerJoin(userBookedSlots, eq(users.userId, userBookedSlots.userId)).where(and(eq(users.slug, slug), eq(userBookedSlots.bookedDate, formattedDate)))
 
         let intervals2: any[] = []
@@ -88,10 +89,6 @@ export async function handleAvailabilityOfDay(ctx: Context) {
         bookedIntervals.forEach((tuple) => {
             intervals2.push({ start: tuple.userBookedSlots.startTime, end: tuple.userBookedSlots.endTime })
         })
-
-        console.log(allIntervals);
-        console.log(intervals2);
-
 
         const returnPayload = getNonIntersectingIntervals(allIntervals, intervals2)
 

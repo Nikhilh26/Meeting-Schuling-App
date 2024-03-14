@@ -14,13 +14,13 @@ const btnClass = {
 export default function page() {
     const { getToken } = useAuth()
     const [availability, setAvailability] = useState({
+        'SUN': ["09:00", "17:00", false],
         'MON': ["09:00", "17:00", true],
         'TUE': ["09:00", "17:00", true],
         'WED': ["09:00", "17:00", true],
         'THU': ["09:00", "17:00", true],
         'FRI': ["09:00", "17:00", true],
         'SAT': ["09:00", "17:00", false],
-        'SUN': ["09:00", "17:00", false]
     })
 
     function handleAvailabilityUpdate(day, updateIdx, value) {
@@ -40,7 +40,7 @@ export default function page() {
         async function getTiming() {
             try {
                 const token = await getToken();
-                fetch('https://back-end.nikhilharisinghani26.workers.dev/getWeeklyschedule', {
+                fetch('http://127.0.0.1:8787/getWeeklyschedule', {
                     headers: {
                         'Authorization': `${token}`,
                         'Content-Type': 'application/json'
@@ -61,7 +61,7 @@ export default function page() {
 
     const handleOnClick = async () => {
         const token = await getToken();
-        fetch('https://back-end.nikhilharisinghani26.workers.dev/updateWeeklyschedule', {
+        fetch('http://127.0.0.1:8787/updateWeeklyschedule', {
             method: "PUT",
             body: JSON.stringify({
                 payload: availability
