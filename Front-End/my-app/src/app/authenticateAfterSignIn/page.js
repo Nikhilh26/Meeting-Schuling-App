@@ -1,15 +1,16 @@
 "use client"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from 'next/navigation'
 import { useClerk } from "@clerk/nextjs";
 
+
 export default function page() {
 
-    const { getToken, userId } = useAuth()
     const { signOut } = useClerk();
     const router = useRouter();
-
+    const { getToken, userId } = useAuth()
+    const [loading, setLoading] = useState();
     useEffect(() => {
         async function handleLogin() {
             try {
