@@ -1,4 +1,8 @@
+'use client';
+import { useState } from "react";
+
 export function SpecificHours() {
+
     return (
         <div className='w-[50%] pl-8'>
 

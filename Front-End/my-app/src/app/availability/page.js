@@ -42,7 +42,7 @@ export default function page() {
 
     function handleDeleteAvailability(day, idx) {
         let tempAvailability = { ...availability };
-        tempAvailability[day][0] = tempAvailability[day][0].filter((singleAvailability, i) => i !== idx)
+        tempAvailability[day][0] = tempAvailability[day][0].filter((_, i) => i !== idx)
         if (tempAvailability[day][0].length === 0) tempAvailability[day][1] = false;
         setAvailability(tempAvailability);
     }
@@ -89,7 +89,7 @@ export default function page() {
     }
 
     return (
-        <div className='w-[75vw] m-auto mt-[10vh] rounded-xl shadow-xl flex flex-row p-8 h-auto min-h-[50vh]'>
+        <div className='w-[75%] m-auto mt-[6%] rounded-xl shadow-xl flex flex-row p-8 h-auto min-h-[50%]'>
 
             {
                 loading ?
@@ -101,7 +101,7 @@ export default function page() {
                                 Weekly Hours
                             </h1>
 
-                            <div className='grow mt-10'>
+                            <div className='mt-10 w-[100%]'>
                                 {
                                     daysofWeek
                                     &&
