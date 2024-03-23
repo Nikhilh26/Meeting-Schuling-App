@@ -1,4 +1,4 @@
-export function WeeklyHour({ day, dayAvailability, handleAvailabilityAddSlot, handleChangeStatus, handleDeleteAvailability }) {
+export function WeeklyHour({ day, dayAvailability, handleAvailabilityAddSlot, handleChangeStatus, handleDeleteAvailability, handleUpdateAvailability }) {
 
     return (
         <div className='flex flex-row mb-5 w-[100%]'>
@@ -11,30 +11,30 @@ export function WeeklyHour({ day, dayAvailability, handleAvailabilityAddSlot, ha
                 value={dayAvailability[1]}
             />
 
-            <h1 className='text-xl font-bold ml-6 w-[17%] mt-[-5px] bg-blue-500'>
+            <h1 className='text-xl font-bold ml-6 w-[13%] mt-[-5px] bg-blue-500'>
                 {day}
             </h1>
 
             {
                 dayAvailability[1] ?
                     <>
-                        <div className="flex flex-col mt-[-5px] w-[100%] ">
+                        <div className="flex flex-col mt-[-5px] w-[67%] ml-[3%]">
                             {
                                 dayAvailability[0].map((ele, idx) => {
                                     return (
                                         <div className="flex flex-row mb-2 w-[100%]" key={idx}>
                                             <input
                                                 type='time'
-                                                className='border border-gray-800 w-[26%] rounded-md ml-[5%] mr-[2%]'
+                                                className='border border-gray-800 w-[28%] rounded-md mr-[2%] p-[2px] text-center'
                                                 value={ele[0]}
-                                                onChange={(e) => { console.log('2') }}
+                                                onChange={(e) => { handleUpdateAvailability(day, idx, 0, e.target.value) }}
                                             />
                                             -
                                             <input
                                                 type='time'
-                                                className='border border-gray-800 w-[26%] rounded-md ml-[2%]'
+                                                className='border border-gray-800 w-[28%] rounded-md ml-[2%] p-[2px] text-center'
                                                 value={ele[1]}
-                                                onChange={() => { console.log('1') }}
+                                                onChange={(e) => { handleUpdateAvailability(day, idx, 1, e.target.value) }}
                                             />
 
                                             <button
@@ -43,25 +43,26 @@ export function WeeklyHour({ day, dayAvailability, handleAvailabilityAddSlot, ha
                                                     handleDeleteAvailability(day, idx)
                                                 }}
                                             >
-
+                                                Del
                                             </button>
                                         </div>
                                     )
                                 })
                             }
                         </div>
-                        {/* <h1
-                            className="ml-[80px] text-xl font-bold">
+                        <div>
                             <button
+                                className="text-xl font-bold mt-[-5px] bg-blue-500"
                                 onClick={() => handleAvailabilityAddSlot(day)}>
-
+                                Add
                             </button>
-                        </h1> */}
+                        </div>
+
                     </>
                     :
 
                     <h1
-                        className='text-2xl font-bold text-gray-500 mt-[-5px] w-[100%] ml-[5%]'>
+                        className='text-2xl font-bold text-gray-500 mt-[-5px] w-[70%] ml-[3%]'>
                         Unavailable
                     </h1>
             }

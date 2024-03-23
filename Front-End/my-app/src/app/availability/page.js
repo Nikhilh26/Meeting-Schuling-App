@@ -47,6 +47,24 @@ export default function page() {
         setAvailability(tempAvailability);
     }
 
+    function handleUpdateAvailability(day, idx, startOrEnd, value) {
+        let tempAvailability = { ...availability };
+        tempAvailability[day][0][idx][startOrEnd] = value;
+        setAvailability(tempAvailability);
+    }
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+    const [showWeeklyHours, setShowWeeklyHours] = useState(true);
+    useEffect(() => {
+        const handleResize = () => {
+            setWindowWidth(window.innerWidth);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     // useEffect(() => {
     //     async function getTiming() {
     //         try {
@@ -89,43 +107,83 @@ export default function page() {
     }
 
     return (
-        <div className='w-[75%] m-auto mt-[6%] rounded-xl shadow-xl flex flex-row p-8 h-auto min-h-[50%]'>
-
+        <div
+            className={`w-[75%] m-auto mt-[6%] rounded-xl shadow-xl p-8 h-auto min-h-[50%] flex ${windowWidth >= 1100 ? 'flex-row' : 'flex-col'}`}>
             {
                 loading ?
                     <h1>Loading....</h1>
                     :
                     <>
-                        <div className='w-[50%] border-r border-black border-r-1 flex flex-col'>
-                            <h1 className='text-2xl font-bold pt-7'>
-                                Weekly Hours
-                            </h1>
+                        <div
+                            className={`w-${windowWidth < 1100 ? '[100%]' : '[60%]  border-r border-black border-r-1 flex flex-col'}`}>
+                            {
+                                windowWidth >= 1100
+                                    ?
+                                    <h1 className='text-2xl font-bold pt-7'>
+                                        Weekly Hours
+                                    </h1>
+                                    :
+                                    <div
+                                        className="w-[80%] bg-blue-500 flex flex-row">
+                                        <h1
+                                            className='text-base font-bold pt-7 mr-[5%]'
+                                            onClick={() => setShowWeeklyHours(1)}>
+                                            <button>
+                                                Weekly Hours
+                                            </button>
+                                        </h1>
+                                        <h1
+                                            className='text-base font-bold pt-7'
+                                            onClick={() => setShowWeeklyHours(0)}
+                                        >
+                                            <button>
+                                                Specific Avail
+                                            </button>
+                                        </h1>
+                                    </div>
+                            }
 
-                            <div className='mt-10 w-[100%]'>
-                                {
-                                    daysofWeek
-                                    &&
-                                    daysofWeek.map((day, idx) => {
-                                        return (
-                                            <WeeklyHour
-                                                day={day}
-                                                dayAvailability={availability[day]}
-                                                handleAvailabilityAddSlot={handleAvailabilityAddSlot}
-                                                handleChangeStatus={handleChangeStatus}
-                                                handleDeleteAvailability={handleDeleteAvailability}
-                                                key={idx}
-                                            />)
-                                    })
-                                }
-                            </div>
+                            {
+                                ((windowWidth >= 1100)
+                                    ||
+                                    (windowWidth < 1100 && showWeeklyHours))
+                                &&
+                                <>
+                                    <div className='mt-10 w-[100%]'>
+                                        {
+                                            daysofWeek
+                                            &&
+                                            daysofWeek.map((day, idx) => {
+                                                return (
+                                                    <WeeklyHour
+                                                        day={day}
+                                                        dayAvailability={availability[day]}
+                                                        handleAvailabilityAddSlot={handleAvailabilityAddSlot}
+                                                        handleChangeStatus={handleChangeStatus}
+                                                        handleDeleteAvailability={handleDeleteAvailability}
+                                                        handleUpdateAvailability={handleUpdateAvailability}
+                                                        key={idx}
+                                                    />)
+                                            })
+                                        }
+                                    </div>
+                                    <div>
+                                        <button style={btnClass} onClick={handleOnClick}> Update </button>
+                                    </div>
+                                </>
+                            }
 
-                            <div>
-                                <button style={btnClass} onClick={handleOnClick}> Update </button>
-                            </div>
                         </div>
-                        <SpecificHours />
+
+                        {
+                            ((windowWidth >= 1100) || (windowWidth < 1100 && !showWeeklyHours))
+                            &&
+                            <div className='w-[40%] pl-8'>
+                                <SpecificHours />
+                            </div>
+                        }
                     </>
             }
-        </div>
+        </div >
     )
 }
