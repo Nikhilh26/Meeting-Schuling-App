@@ -13,7 +13,6 @@ export default function RootLayout({ children }) {
   return (
     <>
       <ClerkProvider>
-
         <html lang="en">
           <body className={inter.className}>
             <Header />
@@ -22,11 +21,7 @@ export default function RootLayout({ children }) {
             </main>
           </body>
         </html>
-
       </ClerkProvider>
     </>
   );
 }
-// <div class="h-56 grid grid-cols-3 gap-4 content-center">
-// <!-- Your grid items go here -->
-// </div>

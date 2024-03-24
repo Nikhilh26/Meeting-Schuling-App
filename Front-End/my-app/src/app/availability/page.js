@@ -54,7 +54,9 @@ export default function page() {
     }
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     const [showWeeklyHours, setShowWeeklyHours] = useState(true);
+
     useEffect(() => {
+        setWindowWidth(window.innerWidth);
         const handleResize = () => {
             setWindowWidth(window.innerWidth);
         };
@@ -108,14 +110,15 @@ export default function page() {
 
     return (
         <div
-            className={`w-[75%] m-auto mt-[6%] rounded-xl shadow-xl p-8 h-auto min-h-[50%] flex ${windowWidth >= 1100 ? 'flex-row' : 'flex-col'}`}>
+            className={`w-[75%] m-auto mt-[6%] sm:rounded-xl sm:shadow-xl p-8 h-auto min-h-[50%] flex ${windowWidth >= 1100 ? 'flex-row' : 'flex-col'} xsm:w-[100%] xxsm:w-[100%] `}>
             {
                 loading ?
                     <h1>Loading....</h1>
                     :
                     <>
                         <div
-                            className={`w-${windowWidth < 1100 ? '[100%]' : '[60%]  border-r border-black border-r-1 flex flex-col'}`}>
+                            className={`w-${windowWidth < 1100 ? '[100%]' : '[100%] border-r border-black border-r-1 flex flex-col'}`}>
+                            {/* {Might cause error bcz of 100% be careful} */}
                             {
                                 windowWidth >= 1100
                                     ?
@@ -126,14 +129,19 @@ export default function page() {
                                     <div
                                         className="w-[80%] bg-blue-500 flex flex-row">
                                         <h1
-                                            className='text-base font-bold pt-7 mr-[5%]'
+                                            className='text-base font-bold pt-7 
+                                            sm:mr-[10%] 
+                                            xsm:text-xl 
+                                            xsm:mr-[8%]
+                                            sm:text-xl
+                                            xxsm:mr-[6%]'
                                             onClick={() => setShowWeeklyHours(1)}>
                                             <button>
                                                 Weekly Hours
                                             </button>
                                         </h1>
                                         <h1
-                                            className='text-base font-bold pt-7'
+                                            className='text-base font-bold pt-7 xsm:text-xl sm:text-xl'
                                             onClick={() => setShowWeeklyHours(0)}
                                         >
                                             <button>
@@ -177,7 +185,8 @@ export default function page() {
                         {
                             ((windowWidth >= 1100) || (windowWidth < 1100 && !showWeeklyHours))
                             &&
-                            <div className={`w-[${windowWidth >= 1100 ? '40%  pl-8' : '80%'}]`}>
+                            <div className={`w-${windowWidth >= 1100 ? '[40%] pl-8' : '[80%]'}`}>
+                                {/* {Might cause error 40% is not in accordance with above div lookout for errory} */}
                                 <SpecificHours />
                             </div>
                         }

@@ -15,6 +15,27 @@ module.exports = {
       screens: {
         "2xl": "1400px",
       },
+    }, screens: {
+      'xxsm': { 'min': '375px', 'max': '450px' },
+      // => @media (min-width: 375px) and (max-width:449px){......}
+
+      'xsm': { 'min': '450px', 'max': '600px' },
+      // => @media (min-width: 450px) and (max-width:600px){......}
+
+      'sm': '601px',
+      // => @media (min-width: 601px) { ... }
+
+      'md': '768px',
+      // => @media (min-width: 768px) { ... }
+
+      'lg': '1024px',
+      // => @media (min-width: 1024px) { ... }
+
+      'xl': '1280px',
+      // => @media (min-width: 1280px) { ... }
+
+      '2xl': '1536px',
+      // => @media (min-width: 1536px) { ... }
     },
     extend: {
       colors: {
