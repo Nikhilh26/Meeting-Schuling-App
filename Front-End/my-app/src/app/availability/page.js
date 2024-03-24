@@ -144,33 +144,32 @@ export default function page() {
                             }
 
                             {
-                                ((windowWidth >= 1100)
-                                    ||
-                                    (windowWidth < 1100 && showWeeklyHours))
-                                &&
-                                <>
-                                    <div className='mt-10 w-[100%]'>
-                                        {
-                                            daysofWeek
-                                            &&
-                                            daysofWeek.map((day, idx) => {
-                                                return (
-                                                    <WeeklyHour
-                                                        day={day}
-                                                        dayAvailability={availability[day]}
-                                                        handleAvailabilityAddSlot={handleAvailabilityAddSlot}
-                                                        handleChangeStatus={handleChangeStatus}
-                                                        handleDeleteAvailability={handleDeleteAvailability}
-                                                        handleUpdateAvailability={handleUpdateAvailability}
-                                                        key={idx}
-                                                    />)
-                                            })
-                                        }
-                                    </div>
-                                    <div>
-                                        <button style={btnClass} onClick={handleOnClick}> Update </button>
-                                    </div>
-                                </>
+                                ((windowWidth >= 1100) || (windowWidth < 1100 && showWeeklyHours)) ?
+                                    <>
+                                        <div className='mt-10 w-[100%]'>
+                                            {
+                                                daysofWeek
+                                                &&
+                                                daysofWeek.map((day, idx) => {
+                                                    return (
+                                                        <WeeklyHour
+                                                            day={day}
+                                                            dayAvailability={availability[day]}
+                                                            handleAvailabilityAddSlot={handleAvailabilityAddSlot}
+                                                            handleChangeStatus={handleChangeStatus}
+                                                            handleDeleteAvailability={handleDeleteAvailability}
+                                                            handleUpdateAvailability={handleUpdateAvailability}
+                                                            key={idx}
+                                                        />)
+                                                })
+                                            }
+                                        </div>
+                                        <div>
+                                            <button style={btnClass} onClick={handleOnClick}> Update </button>
+                                        </div>
+                                    </>
+                                    :
+                                    <></>
                             }
 
                         </div>
@@ -178,7 +177,7 @@ export default function page() {
                         {
                             ((windowWidth >= 1100) || (windowWidth < 1100 && !showWeeklyHours))
                             &&
-                            <div className='w-[40%] pl-8'>
+                            <div className={`w-[${windowWidth >= 1100 ? '40%  pl-8' : '80%'}]`}>
                                 <SpecificHours />
                             </div>
                         }
