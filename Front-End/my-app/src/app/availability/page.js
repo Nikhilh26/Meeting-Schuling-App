@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import { useAuth } from "@clerk/nextjs";
 import { WeeklyHour } from "./weeklyHours";
 import { SpecificHours } from "./specificHours";
+import OverRideForm from "./OverRideForm";
 
 const daysofWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
@@ -14,7 +15,12 @@ const btnClass = {
 };
 
 export default function page() {
+
     const [loading, setLoading] = useState(false);
+    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+    const [showWeeklyHours, setShowWeeklyHours] = useState(true);
+    const [visibility, setVisibility] = useState(false);
+
     const { getToken } = useAuth()
 
     const [availability, setAvailability] = useState({
@@ -52,8 +58,6 @@ export default function page() {
         tempAvailability[day][0][idx][startOrEnd] = value;
         setAvailability(tempAvailability);
     }
-    const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-    const [showWeeklyHours, setShowWeeklyHours] = useState(true);
 
     useEffect(() => {
         setWindowWidth(window.innerWidth);
@@ -109,84 +113,94 @@ export default function page() {
     }
 
     return (
-        <div
-            className={`w-[75%] m-auto sm:mt-[6%] sm:rounded-xl sm:shadow-xl sm:p-8 xxsm:pl-2 h-auto min-h-[50%] flex ${windowWidth >= 1100 ? 'flex-row' : 'flex-col'} xsm:w-[100%] xxsm:w-[100%]`}>
-            {
-                loading ?
-                    <h1>Loading....</h1>
-                    :
-                    <>
-                        <div
-                            className={`w-${windowWidth < 1100 ? '[100%]' : '[100%] border-r border-black border-r-1 flex flex-col'}`}>
-                            {/* {Might cause error bcz of 100% be careful} */}
-                            {
-                                windowWidth >= 1100
-                                    ?
-                                    <h1 className='text-2xl font-bold pt-7'>
-                                        Weekly Hours
-                                    </h1>
-                                    :
-                                    <div
-                                        className="w-[80%] bg-blue-500 flex flex-row">
-                                        <h1
-                                            className='text-base font-bold pt-7 sm:mr-[10%] xsm:text-xl xsm:[8%] sm:text-xl xxsm:mr-[6%]'
-                                            onClick={() => setShowWeeklyHours(1)}>
-                                            <button>
-                                                Weekly Hours
-                                            </button>
+        <>
+            <div
+                className={`w-[75%] m-auto sm:mt-[6%] sm:rounded-xl sm:shadow-xl sm:p-8 xxsm:pl-2 h-auto min-h-[50%] flex ${windowWidth >= 1100 ? 'flex-row' : 'flex-col'} xsm:w-[100%] xxsm:w-[100%]`}>
+                {
+                    loading ?
+                        <h1>Loading....</h1>
+                        :
+                        <>
+                            <div
+                                className={`w-${windowWidth < 1100 ? '[100%]' : '[100%] border-r border-black border-r-1 flex flex-col'}`}>
+                                {/* {Might cause error bcz of 100% be careful} */}
+                                {
+                                    windowWidth >= 1100
+                                        ?
+                                        <h1 className='text-2xl font-bold pt-7'>
+                                            Weekly Hours
                                         </h1>
-                                        <h1
-                                            className='text-base font-bold pt-7 xsm:text-xl sm:text-xl'
-                                            onClick={() => setShowWeeklyHours(0)}
-                                        >
-                                            <button>
-                                                Specific Avail
-                                            </button>
-                                        </h1>
-                                    </div>
-                            }
-
-                            {
-                                ((windowWidth >= 1100) || (windowWidth < 1100 && showWeeklyHours)) ?
-                                    <>
-                                        <div className='mt-10 w-[100%]'>
-                                            {
-                                                daysofWeek
-                                                &&
-                                                daysofWeek.map((day, idx) => {
-                                                    return (
-                                                        <WeeklyHour
-                                                            day={day}
-                                                            dayAvailability={availability[day]}
-                                                            handleAvailabilityAddSlot={handleAvailabilityAddSlot}
-                                                            handleChangeStatus={handleChangeStatus}
-                                                            handleDeleteAvailability={handleDeleteAvailability}
-                                                            handleUpdateAvailability={handleUpdateAvailability}
-                                                            key={idx}
-                                                        />)
-                                                })
-                                            }
+                                        :
+                                        <div
+                                            className="w-[80%] bg-blue-500 flex flex-row">
+                                            <h1
+                                                className='text-base font-bold pt-7 sm:mr-[10%] xsm:text-xl xsm:[8%] sm:text-xl xxsm:mr-[6%]'
+                                                onClick={() => setShowWeeklyHours(1)}>
+                                                <button>
+                                                    Weekly Hours
+                                                </button>
+                                            </h1>
+                                            <h1
+                                                className='text-base font-bold pt-7 xsm:text-xl sm:text-xl'
+                                                onClick={() => setShowWeeklyHours(0)}
+                                            >
+                                                <button>
+                                                    Date Override
+                                                </button>
+                                            </h1>
                                         </div>
-                                        <div>
-                                            <button style={btnClass} onClick={handleOnClick}> Update </button>
-                                        </div>
-                                    </>
-                                    :
-                                    <></>
-                            }
+                                }
 
-                        </div>
+                                {
+                                    ((windowWidth >= 1100) || (windowWidth < 1100 && showWeeklyHours)) ?
+                                        <>
+                                            <div className='mt-10 w-[100%]'>
+                                                {
+                                                    daysofWeek
+                                                    &&
+                                                    daysofWeek.map((day, idx) => {
+                                                        return (
+                                                            <WeeklyHour
+                                                                day={day}
+                                                                dayAvailability={availability[day]}
+                                                                handleAvailabilityAddSlot={handleAvailabilityAddSlot}
+                                                                handleChangeStatus={handleChangeStatus}
+                                                                handleDeleteAvailability={handleDeleteAvailability}
+                                                                handleUpdateAvailability={handleUpdateAvailability}
+                                                                key={idx}
+                                                            />)
+                                                    })
+                                                }
+                                            </div>
+                                            <div>
+                                                <button style={btnClass} onClick={handleOnClick}> Update </button>
+                                            </div>
+                                        </>
+                                        :
+                                        <></>
+                                }
 
-                        {
-                            ((windowWidth >= 1100) || (windowWidth < 1100 && !showWeeklyHours))
-                            &&
-                            <div className={`w-${windowWidth >= 1100 ? '[40%] pl-8' : '[80%] xxsm:w-[90%] xxsm:pl-2'}`}>
-                                {/* {Might cause error 40% is not in accordance with above div lookout for errory} */}
-                                <SpecificHours />
                             </div>
-                        }
-                    </>
+
+                            {
+                                ((windowWidth >= 1100) || (windowWidth < 1100 && !showWeeklyHours))
+                                &&
+                                <div className={`w-${windowWidth >= 1100 ? '[40%] pl-8' : '[80%] xxsm:w-[90%] xxsm:pl-2'}`}>
+                                    {/* {Might cause error 40% is not in accordance with above div lookout for errory} */}
+                                    <SpecificHours
+                                        setVisibility={setVisibility}
+                                    />
+                                </div>
+                            }
+                        </>
+                }
+            </div >
+
+            {
+                visibility
+                &&
+                <OverRideForm />
             }
-        </div >
+        </>
     )
 }

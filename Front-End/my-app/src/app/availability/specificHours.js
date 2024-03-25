@@ -1,4 +1,4 @@
-export function SpecificHours() {
+export function SpecificHours({ setVisibility }) {
 
     return (
         <>
@@ -10,7 +10,9 @@ export function SpecificHours() {
                 Override your availability for specific dates when your hours differ from your regular weekly hours.
             </div>
 
-            <div className="mt-[1vh] rounded-xl border border-gray-800 w-[50%] pl-[10px] pr-[8px] text-sm pt-[2px] pb-[2px] cursor-pointer">
+            <div
+                className="mt-[1vh] rounded-xl border border-gray-800 w-[50%] pl-[10px] pr-[8px] text-sm pt-[2px] pb-[2px] cursor-pointer"
+                onClick={(e) => setVisibility(true)} >
                 Add Date Specific Hours
             </div>
         </>
