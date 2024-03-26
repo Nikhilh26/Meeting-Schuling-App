@@ -20,8 +20,8 @@ export default function page() {
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     const [showWeeklyHours, setShowWeeklyHours] = useState(true);
     const [visibility, setVisibility] = useState(false);
-
-    const { getToken } = useAuth()
+    const [overRideAvailability, setOverRideAvailability] = useState({})
+    // {[date]:[[],[],[]..........]} -> date = dd-mm-yyyy
 
     const [availability, setAvailability] = useState({
         'SUN': [[["09:00", "17:00"]], false],
@@ -32,6 +32,8 @@ export default function page() {
         'FRI': [[["09:00", "17:00"]], true],
         'SAT': [[["09:00", "17:00"]], false],
     })
+
+    const { getToken } = useAuth()
 
     function handleAvailabilityAddSlot(day) {
         let tempAvailability = { ...availability };
@@ -57,6 +59,20 @@ export default function page() {
         let tempAvailability = { ...availability };
         tempAvailability[day][0][idx][startOrEnd] = value;
         setAvailability(tempAvailability);
+    }
+
+    /* OverRideAvailability */
+    function handleAddoverRideAvailability(date) {
+        let tempoverRideAvailability = { ...overRideAvailability }
+        if (!(date in tempoverRideAvailability)) tempoverRideAvailability[date] = []
+        tempoverRideAvailability[date].push(["09:00", "17:00"]);
+        setOverRideAvailability(tempoverRideAvailability);
+    }
+
+    function handleDeleteoverRideAvailability(date, index) {
+        let tempoverRideAvailability = { ...overRideAvailability };
+        tempoverRideAvailability[date] = tempoverRideAvailability[date].filter((_, idx) => idx !== index);
+        setOverRideAvailability(tempoverRideAvailability);
     }
 
     useEffect(() => {
@@ -199,7 +215,12 @@ export default function page() {
             {
                 visibility
                 &&
-                <OverRideForm />
+                <OverRideForm
+                    handleAddoverRideAvailability={handleAddoverRideAvailability}
+                    overRideAvailability={overRideAvailability}
+                    handleDeleteoverRideAvailability={handleDeleteoverRideAvailability}
+                    setVisibility={setVisibility}
+                />
             }
         </>
     )
