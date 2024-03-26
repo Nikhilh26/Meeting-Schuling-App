@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-export default function OverRideForm({ handleAddoverRideAvailability, overRideAvailability, handleDeleteoverRideAvailability, setVisibility }) {
+export default function OverRideForm({ handleAddoverRideAvailability, overRideAvailability, handleDeleteoverRideAvailability, setVisibility, handleUpdateoverRideAvailability }) {
     const [date, setDate] = useState(null);
 
     function handleUpdateDate(date_) {
@@ -37,14 +37,14 @@ export default function OverRideForm({ handleAddoverRideAvailability, overRideAv
                                                         type='time'
                                                         className='border border-gray-800 md:w-[28%] rounded-md mr-[2%] p-[2px] text-center sm:w-[35%]'
                                                         value={ele[0]}
-                                                    // onChange={(e) => { handleUpdateAvailability(day, idx, 0, e.target.value) }}
+                                                        onChange={(e) => { handleUpdateoverRideAvailability(day, idx, 0, e.target.value) }}
                                                     />
                                                     -
                                                     <input
                                                         type='time'
                                                         className='border border-gray-800 md:w-[28%] rounded-md ml-[2%] p-[2px] text-center sm:w-[35%]'
                                                         value={ele[1]}
-                                                    // onChange={(e) => { handleUpdateAvailability(day, idx, 1, e.target.value) }}
+                                                        onChange={(e) => { handleUpdateoverRideAvailability(date, idx, 1, e.target.value) }}
                                                     />
 
                                                     <button

@@ -75,6 +75,12 @@ export default function page() {
         setOverRideAvailability(tempoverRideAvailability);
     }
 
+    function handleUpdateoverRideAvailability(date, index, fromOrTo, value) {
+        let tempoverRideAvailability = { ...overRideAvailability };
+        tempoverRideAvailability[date][index][fromOrTo] = value;
+        setOverRideAvailability(tempoverRideAvailability);
+    }
+
     useEffect(() => {
         setWindowWidth(window.innerWidth);
         const handleResize = () => {
@@ -220,6 +226,7 @@ export default function page() {
                     overRideAvailability={overRideAvailability}
                     handleDeleteoverRideAvailability={handleDeleteoverRideAvailability}
                     setVisibility={setVisibility}
+                    handleUpdateoverRideAvailability={handleUpdateoverRideAvailability}
                 />
             }
         </>
