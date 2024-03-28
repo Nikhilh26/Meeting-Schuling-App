@@ -8,7 +8,7 @@ import { handleWeeklyScheduleUpdate } from "./controllers/handleWeeklyScheduleUp
 import { handleGetWeeklySchedule } from "./controllers/handleGetWeeklySchedule";
 import { handleSlotBooking } from "./controllers/handleSlotBooking";
 import { handleUpstashQueueMessage } from "./controllers/handleOnIncomingQueueMesaage";
-import { handleUserExistsUsingSlug } from "./controllers/handleUserExistsUsingSlug";
+import { handleUserExistenceCheck } from "./controllers/handleUserExistenceCheck";
 import { handleAvailabilityOfDay } from "./controllers/handleAvailabilityOfDay";
 
 const str = "postgresql://nikhilharisinghani26:IK7XE5LvhatP@ep-shy-forest-a1gcnxek.ap-southeast-1.aws.neon.tech/Calendly-Clone?sslmode=require"
@@ -35,9 +35,9 @@ app.post('/slot/book', handleSlotBooking); // Integration Done and (Google API i
 
 app.post('/', handleUpstashQueueMessage) // changes to be made
 
-app.post('/user/exist', handleUserExistsUsingSlug); // Integration Done
+app.post('/user/exist', handleUserExistenceCheck); // Integration Done
 
-app.post('/getAvailabilityOnADay', handleAvailabilityOfDay); // Integration Done
+app.post('/availability/day', handleAvailabilityOfDay); // Integration Done
 
 app.notFound((c) => {
 	return c.text("Not Found");
