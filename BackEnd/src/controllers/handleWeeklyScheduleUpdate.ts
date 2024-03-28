@@ -9,9 +9,10 @@ import { eq } from "drizzle-orm";
 export const daysofWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] as const;
 type DayOfWeek = typeof daysofWeek[number];
 type Payload = {
-    [Key in DayOfWeek]: [string, string, boolean];
+    [Key in DayOfWeek]: [Array<[string, string]>, boolean];
 };
 
+// make sure to remove unavailable in frontend
 export async function handleWeeklyScheduleUpdate(ctx: Context) {
     try {
         const { payload }: { payload: Payload } = await ctx.req.json();
@@ -31,57 +32,34 @@ export async function handleWeeklyScheduleUpdate(ctx: Context) {
         console.log(isValidToken);
         console.log(userId);
 
-        let todaysDate = new Date().toISOString().split('T')[0]
-        const { MON, TUE, WED, THU, FRI, SAT, SUN } = payload;
-        console.log(MON)
-        if (isValidToken === false) {
-            return ctx.json({
-                "Message": "Invalid Token",
-                "success": false
+        let todaysDate = new Date().toISOString().split('T')[0];
+        const keys: DayOfWeek[] = Object.keys(payload) as DayOfWeek[];
+
+        let a = await Promise.all(keys.map(async (day: DayOfWeek) => {
+
+            const temp = payload[day][0].map(async (time) => {
+
+                await db.insert(userWeeklyAvailability).values({
+                    userId,
+                    day,
+                    availableFrom: time[0],
+                    availableTill: time[1],
+                    updatedAt: todaysDate
+                })
+
             })
-        }
 
-        console.log(payload);
-        const res = await db.update(userWeeklyAvailability).set({
-            updatedAt: todaysDate,
-            MONfrom: MON[2] ? MON[0] : '00:00:00',
-            MONtill: MON[2] ? MON[1] : '00:00:00',
-            TUEfrom: TUE[2] ? TUE[0] : '00:00:00',
-            TUEtill: TUE[2] ? TUE[1] : '00:00:00',
-            WEDfrom: WED[2] ? WED[0] : '00:00:00',
-            WEDtill: WED[2] ? WED[1] : '00:00:00',
-            THUfrom: THU[2] ? THU[0] : '00:00:00',
-            THUtill: THU[2] ? THU[1] : '00:00:00',
-            FRIfrom: FRI[2] ? FRI[0] : '00:00:00',
-            FRItill: FRI[2] ? FRI[1] : '00:00:00',
-            SATfrom: SAT[2] ? SAT[0] : '00:00:00',
-            SATtill: SAT[2] ? SAT[1] : '00:00:00',
-            SUNfrom: SUN[2] ? SUN[0] : '00:00:00',
-            SUNtill: SUN[2] ? SUN[1] : '00:00:00'
-        }).where(eq(userWeeklyAvailability.userId, userId));
+            await Promise.all(temp);
+        }))
 
-        console.log(res);
+        await Promise.all(a);
 
-        if (res.rowCount === 0) {
-            await db.insert(userWeeklyAvailability).values({
-                userId,
-                updatedAt: todaysDate,
-                MONfrom: MON[2] ? MON[0] : '00:00:00',
-                MONtill: MON[2] ? MON[1] : '00:00:00',
-                TUEfrom: TUE[2] ? TUE[0] : '00:00:00',
-                TUEtill: TUE[2] ? TUE[1] : '00:00:00',
-                WEDfrom: WED[2] ? WED[0] : '00:00:00',
-                WEDtill: WED[2] ? WED[1] : '00:00:00',
-                THUfrom: THU[2] ? THU[0] : '00:00:00',
-                THUtill: THU[2] ? THU[1] : '00:00:00',
-                FRIfrom: FRI[2] ? FRI[0] : '00:00:00',
-                FRItill: FRI[2] ? FRI[1] : '00:00:00',
-                SATfrom: SAT[2] ? SAT[0] : '00:00:00',
-                SATtill: SAT[2] ? SAT[1] : '00:00:00',
-                SUNfrom: SUN[2] ? SUN[0] : '00:00:00',
-                SUNtill: SUN[2] ? SUN[1] : '00:00:00'
-            })
-        }
+        // if (isValidToken === false) {
+        //     return ctx.json({
+        //         "Message": "Invalid Token",
+        //         "success": false
+        //     })
+        // }
 
         return ctx.json({
             "Message": "Successfully Updated Availability",

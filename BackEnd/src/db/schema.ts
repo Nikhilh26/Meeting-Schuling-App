@@ -23,10 +23,10 @@ export const userAvailability = pgTable("userAvailability", {
 
 // changes or availability defined in availability pages
 export const userWeeklyAvailability = pgTable("userWeeklyAvailability", {
-    index: serial("id").primaryKey(),
+    id: serial("id").primaryKey(),
     day: text("day").notNull(),
-    from: date("from"),
-    till: date("till"),
+    availableFrom: time("availableFrom"),
+    availableTill: time("availableTill"),
     userId: text("userId").references(() => users.userId),
     updatedAt: date("updatedAt").default("now()"),
     createdAt: date("createdAt").default("now()"),
