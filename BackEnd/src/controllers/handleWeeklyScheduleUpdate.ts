@@ -1,6 +1,6 @@
 // handled
 import { Context } from "hono";
-import { publicKey } from "./handleUserRegister";
+import { publicKey } from "./handleUserRegistration";
 import { userWeeklyAvailability } from "../db/schema";
 import { db } from "..";
 import jwt from '@tsndr/cloudflare-worker-jwt'

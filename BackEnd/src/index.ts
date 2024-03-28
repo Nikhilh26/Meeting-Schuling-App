@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { cors } from 'hono/cors';
 import { drizzle } from 'drizzle-orm/neon-http';
 import { neon } from '@neondatabase/serverless';
-import { handleOnUserRegister } from "./controllers/handleUserRegister";
+import { handleUserRegistration } from "./controllers/handleUserRegistration";
 import { handleLogin } from "./controllers/handleLogin";
 import { handleWeeklyScheduleUpdate } from "./controllers/handleWeeklyScheduleUpdate";
 import { handleGetWeeklySchedule } from "./controllers/handleGetWeeklySchedule";
@@ -23,19 +23,19 @@ app.get('/', (c) => {
 	return c.text("Hello World")
 })
 
-app.post('/register-user', handleOnUserRegister); // Integration done
+app.post('/register', handleUserRegistration); // Integration done
 
 app.post('/login', handleLogin) // Integration Done
 
-app.put('/updateWeeklyschedule', handleWeeklyScheduleUpdate); //Integration Done
+app.put('/weekly-schedule/update', handleWeeklyScheduleUpdate); //Integration Done
 
-app.get('/getWeeklyschedule', handleGetWeeklySchedule); // Integration Done
+app.get('/weekly-schedule', handleGetWeeklySchedule); // Integration Done
 
-app.post('/bookSlot', handleSlotBooking); // Integration Done and (Google API integration remains)
+app.post('/slot/book', handleSlotBooking); // Integration Done and (Google API integration remains)
 
 app.post('/', handleUpstashQueueMessage) // changes to be made
 
-app.post('/userExist', handleUserExistsUsingSlug); // Integration Done
+app.post('/user/exist', handleUserExistsUsingSlug); // Integration Done
 
 app.post('/getAvailabilityOnADay', handleAvailabilityOfDay); // Integration Done
 

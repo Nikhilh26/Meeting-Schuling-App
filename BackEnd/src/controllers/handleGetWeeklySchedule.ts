@@ -1,6 +1,6 @@
 import { Context } from "hono";
 import jwt from '@tsndr/cloudflare-worker-jwt'
-import { publicKey } from "./handleUserRegister";
+import { publicKey } from "./handleUserRegistration";
 import { users, userWeeklyAvailability } from "../db/schema";
 import { db } from "..";
 import { eq } from "drizzle-orm";

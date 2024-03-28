@@ -3,7 +3,7 @@ import { db } from "..";
 import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
 
-export async function handleUserExistsUsingSlug(ctx: Context) {
+export async function handleUserExistenceCheck(ctx: Context) {
     try {
         const { slug }: { slug: string } = await ctx.req.json();
         const usersExists = await db.select().from(users).where(eq(users.slug, slug))

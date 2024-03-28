@@ -9,7 +9,7 @@ const pem_key = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwwbU3Y160v8AjhB8x6J
 const splitPem = pem_key?.match(/.{1,64}/g) ?? [];
 export const publicKey = "-----BEGIN PUBLIC KEY-----\n" + splitPem.join("\n") + "\n-----END PUBLIC KEY-----";
 
-export async function handleOnUserRegister(c: Context) {
+export async function handleUserRegistration(c: Context) {
     try {
         const { slug, email, token } = await c.req.json();
         const isValidToken = await jwt.verify(token, publicKey, "RS256");
