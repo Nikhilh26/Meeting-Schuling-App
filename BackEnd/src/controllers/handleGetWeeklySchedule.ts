@@ -5,7 +5,7 @@ import { users, userWeeklyAvailability } from "../db/schema";
 import { db } from "..";
 import { eq } from "drizzle-orm";
 
-const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] as const;
+// const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] as const;
 
 export async function handleGetWeeklySchedule(ctx: Context) {
 
@@ -20,14 +20,15 @@ export async function handleGetWeeklySchedule(ctx: Context) {
 
         const isValidToken = await jwt.verify(token, publicKey, "RS256");
         const decodedToken: any = jwt.decode(token)
-        const userId1 = decodedToken.payload.sub;
+        const userId = decodedToken.payload.sub;
 
-        if (isValidToken === false) {
+        if (!isValidToken) {
             return ctx.json({
                 "Message": "Invalid Token",
                 "success": false
             })
         }
+
 
         const availabilityOfUserOnThatDay = await db.select().from(users).
             innerJoin(userWeeklyAvailability,
@@ -35,21 +36,33 @@ export async function handleGetWeeklySchedule(ctx: Context) {
             where(
                 eq(
                     users.userId,
-                    userId1
+                    userId
                 )
             )
 
-        const weeklyAvailablility = availabilityOfUserOnThatDay[0].userWeeklyAvailability
-        const { userId, updatedAt, ...tempObj } = weeklyAvailablility;
-        const respPayload: any = {}
+        // console.log(availabilityOfUserOnThatDay);
 
-        daysOfWeek.forEach((day) => {
-            let r1 = tempObj[`${day}from`]?.slice(0, -3);
-            let r2 = tempObj[`${day}till`]?.slice(0, -3);
+        const respPayload: any = {
+            'MON': [[], true],
+            'TUE': [[], true],
+            'WED': [[], true],
+            'THU': [[], true],
+            'FRI': [[], true],
+            'SAT': [[], true],
+            'SUN': [[], true],
+        }
 
-            respPayload[day] = [r1, r2, !(r1 === r2)];
+        availabilityOfUserOnThatDay.map((ele) => {
+            //@ts-ignore
+            respPayload[ele.userWeeklyAvailability.day][0].push([ele.userWeeklyAvailability.availableFrom, ele.userWeeklyAvailability.availableTill]);
         })
 
+        const keys = Object.keys(respPayload);
+
+        keys.map((key) => {
+            if (!respPayload[key][0].length) respPayload[key][1] = false;
+        })
+        console.log(respPayload);
         return ctx.json({
             "message": "Success",
             "success": true,
