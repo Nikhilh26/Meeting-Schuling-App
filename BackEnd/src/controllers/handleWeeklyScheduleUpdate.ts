@@ -25,12 +25,12 @@ export async function handleWeeklyScheduleUpdate(ctx: Context) {
 
         const isValidToken = await jwt.verify(token, publicKey, "RS256");
 
-        if (isValidToken === false) {
-            return ctx.json({
-                "Message": "Invalid Token",
-                "success": false
-            })
-        }
+        // if (!isValidToken) {
+        //     return ctx.json({
+        //         "Message": "Invalid Token",
+        //         "success": false
+        //     })
+        // }
 
         const decodedToken: any = jwt.decode(token)
         const userId = decodedToken.payload.sub;
@@ -52,6 +52,13 @@ export async function handleWeeklyScheduleUpdate(ctx: Context) {
                     availableFrom: time[0],
                     availableTill: time[1],
                     updatedAt: todaysDate
+                }).onConflictDoUpdate({
+                    target: [userWeeklyAvailability.userId, userWeeklyAvailability.day],
+                    set: {
+                        availableFrom: time[0],
+                        availableTill: time[1],
+                        updatedAt: todaysDate
+                    }
                 })
 
             })
