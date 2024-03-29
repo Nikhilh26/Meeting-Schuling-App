@@ -27,7 +27,7 @@ app.post('/register', handleUserRegistration); // Integration done
 
 app.post('/login', handleLogin) // Integration Done
 
-app.put('/weekly-schedule/update', handleWeeklyScheduleUpdate); //Integration Done
+app.put('/weekly-schedule/update', handleWeeklyScheduleUpdate); //Changes Done
 
 app.get('/weekly-schedule', handleGetWeeklySchedule); // Integration Done
 

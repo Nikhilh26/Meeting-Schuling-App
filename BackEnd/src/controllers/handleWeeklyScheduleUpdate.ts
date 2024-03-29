@@ -4,7 +4,6 @@ import { publicKey } from "./handleUserRegistration";
 import { userWeeklyAvailability } from "../db/schema";
 import { db } from "..";
 import jwt from '@tsndr/cloudflare-worker-jwt'
-import { eq } from "drizzle-orm";
 
 export const daysofWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] as const;
 type DayOfWeek = typeof daysofWeek[number];
@@ -25,6 +24,14 @@ export async function handleWeeklyScheduleUpdate(ctx: Context) {
             })
 
         const isValidToken = await jwt.verify(token, publicKey, "RS256");
+
+        if (isValidToken === false) {
+            return ctx.json({
+                "Message": "Invalid Token",
+                "success": false
+            })
+        }
+
         const decodedToken: any = jwt.decode(token)
         const userId = decodedToken.payload.sub;
 
@@ -35,7 +42,7 @@ export async function handleWeeklyScheduleUpdate(ctx: Context) {
         let todaysDate = new Date().toISOString().split('T')[0];
         const keys: DayOfWeek[] = Object.keys(payload) as DayOfWeek[];
 
-        let a = await Promise.all(keys.map(async (day: DayOfWeek) => {
+        await Promise.all(keys.map(async (day: DayOfWeek) => {
 
             const temp = payload[day][0].map(async (time) => {
 
@@ -51,15 +58,6 @@ export async function handleWeeklyScheduleUpdate(ctx: Context) {
 
             await Promise.all(temp);
         }))
-
-        await Promise.all(a);
-
-        // if (isValidToken === false) {
-        //     return ctx.json({
-        //         "Message": "Invalid Token",
-        //         "success": false
-        //     })
-        // }
 
         return ctx.json({
             "Message": "Successfully Updated Availability",

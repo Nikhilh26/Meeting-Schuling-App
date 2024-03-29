@@ -5,6 +5,7 @@ export const users = pgTable("users", {
     email: text("email").primaryKey(),
     slug: text("slug").unique(),
     userId: text("userId").unique(),
+    userName: text("userName"),
     updatedAt: date("updatedAt").default("now()"),
     createdAt: date("createdAt").default("now()"),
 });
@@ -39,5 +40,6 @@ export const userBookedSlots = pgTable('userBookedSlots', {
     startTime: time('bookedFrom').notNull(),
     endTime: time('bookedTill').notNull(),
     bookedDate: date('bookedDate').notNull(),
+    eventDescription: text("eventDescription"),
     eventId: serial('eventId').primaryKey(),
 })
