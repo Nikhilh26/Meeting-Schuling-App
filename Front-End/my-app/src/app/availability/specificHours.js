@@ -1,4 +1,6 @@
-export function SpecificHours({ setVisibility }) {
+export function SpecificHours({ setVisibility, specificAvailability }) {
+    console.log(specificAvailability)
+    let keys = Object.keys(specificAvailability);
 
     return (
         <>
@@ -15,6 +17,34 @@ export function SpecificHours({ setVisibility }) {
                 onClick={(e) => setVisibility(true)} >
                 Add Date Specific Hours
             </div>
+
+            {
+                keys.map((key, idx) => {
+                    return (
+                        <div
+                            key={idx}
+                            className="w-[100%] flex flex-row justify-between mt-5"
+                        >
+                            <h1>
+                                {key}
+                            </h1>
+
+                            <div className="flex flex-col">
+                                {
+                                    specificAvailability[key].map((ele) => {
+                                        return (
+                                            <div>
+                                                {ele[0]}-{ele[1]}
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </div>
+                        </div>
+                    )
+                })
+            }
+
         </>
     )
 }
