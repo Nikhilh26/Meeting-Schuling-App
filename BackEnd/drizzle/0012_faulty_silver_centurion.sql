@@ -1,0 +1,1 @@
+ALTER TABLE "userWeeklyAvailability" DROP CONSTRAINT "userWeeklyAvailability_userId_day_unique";

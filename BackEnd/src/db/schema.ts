@@ -1,4 +1,4 @@
-import { pgTable, text, date, time, serial } from "drizzle-orm/pg-core";
+import { pgTable, text, date, time, serial, unique } from "drizzle-orm/pg-core";
 
 // This db is only for checking wether exists in the db or not
 export const users = pgTable("users", {
@@ -30,7 +30,7 @@ export const userWeeklyAvailability = pgTable("userWeeklyAvailability", {
     availableTill: time("availableTill"),
     userId: text("userId").references(() => users.userId),
     updatedAt: date("updatedAt").default("now()"),
-    createdAt: date("createdAt").default("now()"),
+    createdAt: date("createdAt").default("now()")
 })
 
 // this db only stores slots that are used

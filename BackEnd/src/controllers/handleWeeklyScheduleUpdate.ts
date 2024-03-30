@@ -4,6 +4,7 @@ import { publicKey } from "./handleUserRegistration";
 import { userWeeklyAvailability } from "../db/schema";
 import { db } from "..";
 import jwt from '@tsndr/cloudflare-worker-jwt'
+import { and, eq } from "drizzle-orm";
 
 export const daysofWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] as const;
 type DayOfWeek = typeof daysofWeek[number];
@@ -43,8 +44,13 @@ export async function handleWeeklyScheduleUpdate(ctx: Context) {
         const keys: DayOfWeek[] = Object.keys(payload) as DayOfWeek[];
 
         await Promise.all(keys.map(async (day: DayOfWeek) => {
+            //@ts-ignore
+            await db.delete(userWeeklyAvailability).where(and(eq(userId, userWeeklyAvailability.userId), eq(day, userWeeklyAvailability.day)))
+        }))
 
-            const temp = payload[day][0].map(async (time) => {
+        await Promise.all(keys.map(async (day: DayOfWeek) => {
+
+            const eachDaysAvailability = payload[day][0].map(async (time) => {
 
                 await db.insert(userWeeklyAvailability).values({
                     userId,
@@ -52,18 +58,10 @@ export async function handleWeeklyScheduleUpdate(ctx: Context) {
                     availableFrom: time[0],
                     availableTill: time[1],
                     updatedAt: todaysDate
-                }).onConflictDoUpdate({
-                    target: [userWeeklyAvailability.userId, userWeeklyAvailability.day],
-                    set: {
-                        availableFrom: time[0],
-                        availableTill: time[1],
-                        updatedAt: todaysDate
-                    }
                 })
-
             })
 
-            await Promise.all(temp);
+            await Promise.all(eachDaysAvailability);
         }))
 
         return ctx.json({

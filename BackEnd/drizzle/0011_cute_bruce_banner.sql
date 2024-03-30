@@ -1,0 +1,1 @@
+ALTER TABLE "userAvailability" DROP CONSTRAINT "userAvailability_userId_date_unique";

@@ -1,10 +1,7 @@
 import { Context } from "hono";
 import { db } from "..";
-import { userBookedSlots, userWeeklyAvailability, users } from "../db/schema";
+import { userAvailability, userBookedSlots, userWeeklyAvailability, users } from "../db/schema";
 import { and, eq } from "drizzle-orm";
-import { daysofWeek } from "./handleWeeklyScheduleUpdate";
-
-type DayOfWeek = typeof daysofWeek[number];
 
 function generateIntervals(startTime: any, endTime: any, intervalMinutes = 30) {
 
@@ -64,33 +61,46 @@ function getNonIntersectingIntervals(intervals1: any, intervals2: any) {
 
 export async function handleAvailabilityOfDay(ctx: Context) {
     try {
-        const { slug, day, formattedDate }: { slug: string, day: DayOfWeek, formattedDate: string } = await ctx.req.json();
+        const { slug, day, formattedDate }: { slug: string, day: any, formattedDate: string } = await ctx.req.json();
 
-        console.log(formattedDate);
-        console.log(day);
+        // @ts-ignore
+        const checkSpecificUserAvailability = await db.select().from(userAvailability).innerJoin(users, eq(users.userId, userAvailability.userId)).where(and(eq(formattedDate, userAvailability.date), eq(slug, users.slug)));
+        let availabilityRange: Array<[string, string]> = [];
 
-        const data = await db.select().from(users).innerJoin(userWeeklyAvailability,
-            eq(userWeeklyAvailability.userId, users.userId)).where(eq(users.slug, slug));
+        if (checkSpecificUserAvailability.length === 0) {
+            const userData = await db.select().from(users).innerJoin(userWeeklyAvailability, eq(userWeeklyAvailability.userId, users.userId)).where(and(eq(users.slug, slug), eq(day, userWeeklyAvailability.day)));
 
-        if (data[0].userWeeklyAvailability[`${day}from`] === data[0].userWeeklyAvailability[`${day}till`]) {
-            console.log([]);
-            return ctx.json({
-                "success": true,
-                "returnPayload": []
+            userData.map((ele) => {
+
+                if (ele.userWeeklyAvailability.availableFrom && ele.userWeeklyAvailability.availableTill)
+                    availabilityRange.push([ele.userWeeklyAvailability.availableFrom, ele.userWeeklyAvailability.availableTill]);
+
+            })
+        } else {
+
+            checkSpecificUserAvailability.map((ele) => {
+
+                if (ele.userAvailability.startTime && ele.userAvailability.endTime)
+                    availabilityRange.push([ele.userAvailability.startTime, ele.userAvailability.endTime]);
+
             })
         }
 
-        const allIntervals = generateIntervals(data[0].userWeeklyAvailability[`${day}from`], data[0].userWeeklyAvailability[`${day}till`]);
+        let allIntervals: Array<{ start: string, end: string }> = [];
 
-        const bookedIntervals = await db.select().from(users).innerJoin(userBookedSlots, eq(users.userId, userBookedSlots.userId)).where(and(eq(users.slug, slug), eq(userBookedSlots.bookedDate, formattedDate)))
-
-        let intervals2: any[] = []
-
-        bookedIntervals.forEach((tuple) => {
-            intervals2.push({ start: tuple.userBookedSlots.startTime, end: tuple.userBookedSlots.endTime })
+        availabilityRange.map((ele) => {
+            allIntervals = [...allIntervals, ...generateIntervals(ele[0], ele[1])]
         })
 
-        const returnPayload = getNonIntersectingIntervals(allIntervals, intervals2)
+        const bookedIntervalsDB = await db.select().from(users).innerJoin(userBookedSlots, eq(users.userId, userBookedSlots.userId)).where(and(eq(users.slug, slug), eq(userBookedSlots.bookedDate, formattedDate)))
+
+        let bookedIntervals: any[] = []
+
+        bookedIntervalsDB.forEach((tuple) => {
+            bookedIntervals.push({ start: tuple.userBookedSlots.startTime, end: tuple.userBookedSlots.endTime })
+        })
+
+        const returnPayload = getNonIntersectingIntervals(allIntervals, bookedIntervals);
 
         return ctx.json({
             "success": true,
