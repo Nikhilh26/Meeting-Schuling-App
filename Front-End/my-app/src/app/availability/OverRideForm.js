@@ -1,34 +1,70 @@
-import { useState } from "react";
+import { useReducer, useState } from "react";
 
-export default function OverRideForm({ handleSpecificAvailability, setVisibility }) {
+function tasksReducer(availability, action) {
+    let tempAvailability = { ...availability };
+    switch (action.type) {
+        case 'Initialize_availability_For_Date':
+            if (!(action.date in tempAvailability)) {
+                if (!(action.date in action.specificAvailability)) {
+                    tempAvailability[action.date] = []
+                    tempAvailability[action.date].push(["09:00", "17:00"]);
+                }
+                else {
+                    tempAvailability[action.date] = [...action.specificAvailability[action.date]];
+                }
+            }
+            return tempAvailability;
+        case 'Update_Availability':
+            tempAvailability[action.date][action.index][action.fromOrTo] = action.value;
+            return tempAvailability;
+        case 'Delete_Availability':
+            tempAvailability[action.date] = tempAvailability[action.date].filter((_, idx) => idx !== action.index);
+            return tempAvailability
+        case 'Add_Availability':
+            tempAvailability[action.date].push(["09:00", "17:00"]);
+            return tempAvailability;
+        default: {
+            throw Error('Unknown Action' + action.type);
+        }
+    }
+}
+
+export default function OverRideForm({ handleAddSpecificAvailability, setVisibility, specificAvailability }) {
     const [date, setDate] = useState(null);
-    const [availability, setAvailability] = useState({});
+    const [availability, dispatch] = useReducer(tasksReducer, {});
 
     function handleUpdateDate(date_) {
         setDate(date_);
-        let tempAvailability = { ...availability };
-        if (!(date_ in tempAvailability)) tempAvailability[date_] = []
-        tempAvailability[date_].push(["09:00", "17:00"]);
-        setAvailability(tempAvailability);
+        dispatch({
+            type: 'Initialize_availability_For_Date',
+            date: date_,
+            specificAvailability
+        })
     }
 
-    function handleUpdateAvailability(date, index, fromOrTo, value) {
-        let tempAvailability = { ...availability };
-        tempAvailability[date][index][fromOrTo] = value;
-        setAvailability(tempAvailability);
+    function handleUpdateAvailability(index, fromOrTo, value) {
+        dispatch({
+            type: 'Update_Availability',
+            date,
+            index,
+            fromOrTo,
+            value
+        })
     }
 
-    function handleDeleteAvailability(date, index) {
-        let tempAvailability = { ...availability };
-        tempAvailability[date] = tempAvailability[date].filter((_, idx) => idx !== index);
-        setAvailability(tempAvailability);
+    function handleDeleteAvailability(index) {
+        dispatch({
+            type: 'Delete_Availability',
+            date,
+            index
+        })
     }
 
     function handleAddAvailability() {
-        let tempAvailability = { ...availability };
-        tempAvailability[date].push(["09:00", "17:00"]);
-        console.log(tempAvailability);
-        setAvailability(tempAvailability);
+        dispatch({
+            type: 'Add_Availability',
+            date
+        })
     }
 
     return (
@@ -72,19 +108,19 @@ export default function OverRideForm({ handleSpecificAvailability, setVisibility
                                                         type='time'
                                                         className='border border-gray-800 md:w-[28%] rounded-md mr-[2%] p-[2px] text-center sm:w-[35%]'
                                                         value={ele[0]}
-                                                        onChange={(e) => { handleUpdateAvailability(day, idx, 0, e.target.value) }}
+                                                        onChange={(e) => { handleUpdateAvailability(idx, 0, e.target.value) }}
                                                     />
                                                     -
                                                     <input
                                                         type='time'
                                                         className='border border-gray-800 md:w-[28%] rounded-md ml-[2%] p-[2px] text-center sm:w-[35%]'
                                                         value={ele[1]}
-                                                        onChange={(e) => { handleUpdateAvailability(date, idx, 1, e.target.value) }}
+                                                        onChange={(e) => { handleUpdateAvailability(idx, 1, e.target.value) }}
                                                     />
 
                                                     <button
                                                         className="pl-2 text-xl font-bold xxsm:text-base"
-                                                        onClick={() => { handleDeleteAvailability(date, idx) }}
+                                                        onClick={() => { handleDeleteAvailability(idx) }}
                                                     >
                                                         Del
                                                     </button>
@@ -113,7 +149,12 @@ export default function OverRideForm({ handleSpecificAvailability, setVisibility
 
                 <button
                     className="bg-green-500 w-[100%] border-2 border-black mt-2 font-bold"
-                    onClick={() => { handleSpecificAvailability(availability[date], date); setAvailability({}) }}
+                    onClick={() => {
+                        handleAddSpecificAvailability(availability[date], date);
+                        dispatch({
+
+                        })
+                    }}
                 >
                     Submit
                 </button>

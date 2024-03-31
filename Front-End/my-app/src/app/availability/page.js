@@ -62,7 +62,7 @@ export default function page() {
     }
 
     /* specificAvailability */
-    function handleSpecificAvailability(timeRanges, date) {
+    function handleAddSpecificAvailability(timeRanges, date) {
         let tempSpecificAvailability = { ...specificAvailability };
         console.log(date);
         if (!(date in tempSpecificAvailability)) tempSpecificAvailability[date] = [];
@@ -213,8 +213,9 @@ export default function page() {
                 visibility
                 &&
                 <OverRideForm
-                    handleSpecificAvailability={handleSpecificAvailability}
+                    handleAddSpecificAvailability={handleAddSpecificAvailability}
                     setVisibility={setVisibility}
+                    specificAvailability={specificAvailability}
                 />
             }
         </>
