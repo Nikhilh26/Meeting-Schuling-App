@@ -1,11 +1,10 @@
 "use client"
 import { useState, useEffect } from "react"
 import { useAuth } from "@clerk/nextjs";
-import { WeeklyHour } from "./weeklyHours";
 import { SpecificHours } from "./specificHours";
 import OverRideForm from "./OverRideForm";
-
-const daysofWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+import MainFormHeader from "./MainFormHeader";
+import MainFormWeeklyHours from "./MainFormWeeklyHours";
 
 const btnClass = {
     backgroundColor: "#f00",
@@ -136,54 +135,22 @@ export default function page() {
                             <div
                                 className={`w-${windowWidth < 1100 ? '[100%]' : '[60%] border-r border-black border-r-1 flex flex-col'}`}>
                                 {/* {Might cause error bcz of 100% be careful} */}
-                                {
-                                    windowWidth >= 1100
-                                        ?
-                                        <h1 className='text-2xl font-bold pt-7'>
-                                            Weekly Hours
-                                        </h1>
-                                        :
-                                        <div
-                                            className="w-[80%] bg-blue-500 flex flex-row">
-                                            <h1
-                                                className='text-base font-bold pt-7 sm:mr-[10%] xsm:text-xl xsm:[8%] sm:text-xl xxsm:mr-[6%]'
-                                                onClick={() => setShowWeeklyHours(1)}>
-                                                <button>
-                                                    Weekly Hours
-                                                </button>
-                                            </h1>
-                                            <h1
-                                                className='text-base font-bold pt-7 xsm:text-xl sm:text-xl'
-                                                onClick={() => setShowWeeklyHours(0)}
-                                            >
-                                                <button>
-                                                    Date Override
-                                                </button>
-                                            </h1>
-                                        </div>
-                                }
+
+                                <MainFormHeader
+                                    windowWidth={windowWidth}
+                                    setShowWeeklyHours={setShowWeeklyHours}
+                                />
 
                                 {
                                     ((windowWidth >= 1100) || (windowWidth < 1100 && showWeeklyHours)) ?
                                         <>
-                                            <div className='mt-10 w-[100%]'>
-                                                {
-                                                    daysofWeek
-                                                    &&
-                                                    daysofWeek.map((day, idx) => {
-                                                        return (
-                                                            <WeeklyHour
-                                                                day={day}
-                                                                dayAvailability={availability[day]}
-                                                                handleAvailabilityAddSlot={handleAvailabilityAddSlot}
-                                                                handleChangeStatus={handleChangeStatus}
-                                                                handleDeleteAvailability={handleDeleteAvailability}
-                                                                handleUpdateAvailability={handleUpdateAvailability}
-                                                                key={idx}
-                                                            />)
-                                                    })
-                                                }
-                                            </div>
+                                            <MainFormWeeklyHours
+                                                handleAvailabilityAddSlot={handleAvailabilityAddSlot}
+                                                handleChangeStatus={handleChangeStatus}
+                                                handleDeleteAvailability={handleDeleteAvailability}
+                                                handleUpdateAvailability={handleUpdateAvailability}
+                                                availability={availability}
+                                            />
                                             <div>
                                                 <button style={btnClass} onClick={handleOnClick}> Update </button>
                                             </div>
