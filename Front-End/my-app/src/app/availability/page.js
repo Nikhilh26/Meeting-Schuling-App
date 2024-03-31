@@ -25,7 +25,7 @@ export default function page() {
     const [availability, setAvailability] = useState({
         'SUN': [[["09:00", "17:00"]], false],
         'MON': [[["09:00", "17:00"]], true],
-        'TUE': [[["09:00", "17:00"], ["18:00", "19:00"], ["18:00", "19:00"]], true],
+        'TUE': [[["09:00", "17:00"]], true],
         'WED': [[["09:00", "17:00"]], true],
         'THU': [[["09:00", "17:00"]], true],
         'FRI': [[["09:00", "17:00"]], true],
@@ -61,11 +61,38 @@ export default function page() {
     }
 
     /* specificAvailability */
-    function handleAddSpecificAvailability(timeRanges, date) {
+    async function handleAddSpecificAvailability(timeRanges, date) {
         let tempSpecificAvailability = { ...specificAvailability };
+        // console.log(date);
+
+        timeRanges.forEach(element => {
+            element[0] = element[0] + ":00"
+            element[1] = element[1] + ":00"
+        });
+        console.log(timeRanges);
         console.log(date);
         if (!(date in tempSpecificAvailability)) tempSpecificAvailability[date] = [];
         tempSpecificAvailability[date] = [...tempSpecificAvailability[date], ...timeRanges];
+        const token = await getToken();
+
+        fetch('http://127.0.0.1:8787/availability/overRide', {
+            method: "POST",
+            body: JSON.stringify({
+                token,
+                payload: {
+                    availabilityTimeRange: timeRanges,
+                    date: date
+                }
+            })
+        }).then((data) => {
+            return data.json()
+        }).then((data) => {
+            alert('Success');
+            console.log(data);
+        }).catch((err) => {
+            alert('Something Went wrong')
+        })
+
         setSpecificAvailability(tempSpecificAvailability);
         setVisibility(false);
     }
@@ -86,16 +113,17 @@ export default function page() {
         async function getTiming() {
             try {
                 const token = await getToken();
-                fetch('https://back-end.nikhilharisinghani26.workers.dev/getWeeklyschedule', {
+                fetch('https://back-end.nikhilharisinghani26.workers.dev/availability', {
                     headers: {
                         'Authorization': `${token}`,
                         'Content-Type': 'application/json'
                     },
                     method: "GET"
                 }).then(async (data) => await data.json()).then((data) => {
-                    console.log(data.respPayload)
-                    setLoading((prev) => prev + 1);
-                    if (data?.respPayload) setAvailability(data.respPayload);
+                    // console.log(data.respPayload)
+                    if (data?.respPayload1) setAvailability(data.respPayload1);
+                    if (data?.respPayload2) setSpecificAvailability(data.respPayload2);
+                    console.log('Arrived');
                 })
 
             } catch (error) {
@@ -105,10 +133,18 @@ export default function page() {
 
         getTiming();
     }, [])
+    // For User experience
+    useEffect(() => {
+        setLoading((prev) => prev + 1);
+    }, [specificAvailability])
+
+    useEffect(() => {
+        setLoading((prev) => prev + 1);
+    }, [availability])
 
     const handleOnClick = async () => {
         const token = await getToken();
-        fetch('http://127.0.0.1:8787/updateWeeklyschedule', {
+        fetch('https://back-end.nikhilharisinghani26.workers.dev/weekly-schedule/update', {
             method: "PUT",
             body: JSON.stringify({
                 payload: availability
@@ -128,7 +164,7 @@ export default function page() {
             <div
                 className={`w-[75%] m-auto sm:mt-[6%] sm:rounded-xl sm:shadow-xl sm:p-8 xxsm:pl-2 h-auto min-h-[50%] flex ${windowWidth >= 1100 ? 'flex-row' : 'flex-col'} xsm:w-[100%] xxsm:w-[100%]`}>
                 {
-                    loading < 2 ?
+                    loading < 4 ?
                         <h1>Loading....</h1>
                         :
                         <>

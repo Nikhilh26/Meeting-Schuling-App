@@ -5,7 +5,7 @@ import { neon } from '@neondatabase/serverless';
 import { handleUserRegistration } from "./controllers/handleUserRegistration";
 import { handleLogin } from "./controllers/handleLogin";
 import { handleWeeklyScheduleUpdate } from "./controllers/handleWeeklyScheduleUpdate";
-import { handleGetWeeklySchedule } from "./controllers/handleGetWeeklySchedule";
+import { handleGetAvailability } from "./controllers/handleGetAvailability ";
 import { handleSlotBooking } from "./controllers/handleSlotBooking";
 import { handleUpstashQueueMessage } from "./controllers/handleOnIncomingQueueMesaage";
 import { handleUserExistenceCheck } from "./controllers/handleUserExistenceCheck";
@@ -24,25 +24,35 @@ app.get('/', (c) => {
 	return c.text("Hello World")
 })
 
+//Registration of a user and its entry in db
 app.post('/register', handleUserRegistration); // Integration done
 
+// Login Authentication
 app.post('/login', handleLogin) // Integration Done
 
+// Update weekly schedule of a person
 app.put('/weekly-schedule/update', handleWeeklyScheduleUpdate); //Changes Done
 
-app.get('/weekly-schedule', handleGetWeeklySchedule); // Changes Done
+// fetches userAvailability as respPayload2 and userWeeklyAvailability as respPayload1
+app.get('/availability', handleGetAvailability); // Changes Done
 
+// Books slot between two person
 app.post('/slot/book', handleSlotBooking); // Integration Done and (Google API integration remains)
 
+// Handles Message sent by Queue
 app.post('/', handleUpstashQueueMessage) // changes to be made
 
+//Check wether /{user_slug} this exist or not
 app.post('/user/exist', handleUserExistenceCheck); // Integration Done
 
+//Fetches availability of a user using Slug for the given Day which used to schedule call
 app.post('/availability/day', handleAvailabilityOfDay); // Integration Done
 
+// Updates UserAvailability Table
 app.post('/availability/overRide', handleOverRideAvailability)
 
 app.notFound((c) => {
+	c.status(404);
 	return c.text("Not Found");
 })
 

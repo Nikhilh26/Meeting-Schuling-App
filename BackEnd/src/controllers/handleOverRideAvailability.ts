@@ -41,6 +41,7 @@ export async function handleOverRideAvailability(ctx: Context) {
 
     } catch (error) {
         console.log(error);
+        ctx.status(500);
         return ctx.json({
             "message": "Something went wrong",
             "success": false

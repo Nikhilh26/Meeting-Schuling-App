@@ -23,6 +23,8 @@ function tasksReducer(availability, action) {
         case 'Add_Availability':
             tempAvailability[action.date].push(["09:00", "17:00"]);
             return tempAvailability;
+        case 'Set_To_Default':
+            return {}
         default: {
             throw Error('Unknown Action' + action.type);
         }
@@ -95,7 +97,7 @@ export default function OverRideForm({ handleAddSpecificAvailability, setVisibil
 
                 <div className="bg-gray-400 mt-8 flex flex-row w-[100%] p-4">
                     {
-                        (date !== null && availability[date].length > 0) ?
+                        (date !== null && (date in availability) && availability[date].length > 0) ?
                             <>
 
                                 <div className="flex flex-col w-[85%]">
@@ -152,7 +154,7 @@ export default function OverRideForm({ handleAddSpecificAvailability, setVisibil
                     onClick={() => {
                         handleAddSpecificAvailability(availability[date], date);
                         dispatch({
-
+                            type: 'Set_To_Default'
                         })
                     }}
                 >

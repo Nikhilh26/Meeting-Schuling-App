@@ -61,7 +61,7 @@ export default function page({ params }) {
         async function checkUserExists() {
 
             try {
-                fetch('https://back-end.nikhilharisinghani26.workers.dev/userExist', {
+                fetch('https://back-end.nikhilharisinghani26.workers.dev/user/exist', {
                     body: JSON.stringify({
                         slug: params.slug[0]
                     }),

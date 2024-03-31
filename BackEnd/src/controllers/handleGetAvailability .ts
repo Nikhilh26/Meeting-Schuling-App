@@ -1,13 +1,12 @@
 import { Context } from "hono";
 import jwt from '@tsndr/cloudflare-worker-jwt'
 import { publicKey } from "./handleUserRegistration";
-import { users, userWeeklyAvailability } from "../db/schema";
+import { userAvailability, users, userWeeklyAvailability } from "../db/schema";
 import { db } from "..";
 import { eq } from "drizzle-orm";
 
-// const daysOfWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'] as const;
 
-export async function handleGetWeeklySchedule(ctx: Context) {
+export async function handleGetAvailability(ctx: Context) {
 
     try {
         const token = ctx.req.header('Authorization');
@@ -29,7 +28,7 @@ export async function handleGetWeeklySchedule(ctx: Context) {
             })
         }
 
-
+        // Weekly Availability
         const availabilityOfUserOnThatDay = await db.select().from(users).
             innerJoin(userWeeklyAvailability,
                 eq(users.userId, userWeeklyAvailability.userId)).
@@ -42,7 +41,7 @@ export async function handleGetWeeklySchedule(ctx: Context) {
 
         // console.log(availabilityOfUserOnThatDay);
 
-        const respPayload: any = {
+        const respPayload1: any = {
             'MON': [[], true],
             'TUE': [[], true],
             'WED': [[], true],
@@ -54,19 +53,32 @@ export async function handleGetWeeklySchedule(ctx: Context) {
 
         availabilityOfUserOnThatDay.map((ele) => {
             //@ts-ignore
-            respPayload[ele.userWeeklyAvailability.day][0].push([ele.userWeeklyAvailability.availableFrom, ele.userWeeklyAvailability.availableTill]);
+            respPayload1[ele.userWeeklyAvailability.day][0].push([ele.userWeeklyAvailability.availableFrom, ele.userWeeklyAvailability.availableTill]);
         })
 
-        const keys = Object.keys(respPayload);
+        const keys = Object.keys(respPayload1);
 
         keys.map((key) => {
-            if (!respPayload[key][0].length) respPayload[key][1] = false;
+            if (!respPayload1[key][0].length) respPayload1[key][1] = false;
         })
-        console.log(respPayload);
+        console.log(respPayload1);
+
+        // User Availability
+        const userOverRiddenAvailability = await db.select().from(userAvailability).innerJoin(users, eq(users.userId, userAvailability.userId)).where(eq(userId, users.userId));
+
+        const respPayload2: any = {}
+        userOverRiddenAvailability.forEach((ele) => {
+            if (!(ele.userAvailability.date in respPayload2)) {
+                respPayload2[ele.userAvailability.date] = [];
+            }
+            respPayload2[ele.userAvailability.date].push([ele.userAvailability.startTime, ele.userAvailability.endTime]);
+        })
+
         return ctx.json({
             "message": "Success",
             "success": true,
-            respPayload
+            respPayload1,
+            respPayload2
         })
 
     } catch (error) {

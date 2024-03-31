@@ -1,5 +1,4 @@
 export function SpecificHours({ setVisibility, specificAvailability }) {
-    console.log(specificAvailability)
     let keys = Object.keys(specificAvailability);
 
     return (
@@ -31,9 +30,9 @@ export function SpecificHours({ setVisibility, specificAvailability }) {
 
                             <div className="flex flex-col">
                                 {
-                                    specificAvailability[key].map((ele) => {
+                                    specificAvailability[key].map((ele, idx) => {
                                         return (
-                                            <div>
+                                            <div key={idx}>
                                                 {ele[0]}-{ele[1]}
                                             </div>
                                         )
