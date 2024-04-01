@@ -46,7 +46,7 @@ app.post('/', handleUpstashQueueMessage) // changes to be made
 app.post('/user/exist', handleUserExistenceCheck); // Integration Done
 
 //Fetches availability of a user using Slug for the given Day which used to schedule call
-app.post('/availability/day', handleAvailabilityOfDay); // Integration Done
+app.get('/availability/day', handleAvailabilityOfDay); // Integration Done
 
 // Updates UserAvailability Table
 app.post('/availability/overRide', handleOverRideAvailability)
