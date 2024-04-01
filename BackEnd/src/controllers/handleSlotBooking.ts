@@ -25,7 +25,7 @@ function getEndTime(time: string) {
 export async function handleSlotBooking(ctx: Context) {
     try {
         const { payload }:
-            { payload: { date: string, startTime: string, clientEmailId: string, slug: string } }
+            { payload: { date: string, startTime: string, clientEmailId: string, slug: string, eventDescription: string } }
             = await ctx.req.json();
 
         const emailId = await db.select().from(users).where(eq(users.slug, payload.slug));
@@ -45,11 +45,11 @@ export async function handleSlotBooking(ctx: Context) {
             startTime: payload.startTime,
             endTime,
             clientEmailId: payload.clientEmailId,
-            bookedDate: payload.date
+            bookedDate: payload.date,
+            eventDescription: payload.eventDescription
         })
 
-
-        await handleMailScheduling(emailId[0].email, payload.clientEmailId, payload.date, payload.startTime);
+        // await handleMailScheduling(emailId[0].email, payload.clientEmailId, payload.date, payload.startTime);
 
         return ctx.json({
             "message": "successful",

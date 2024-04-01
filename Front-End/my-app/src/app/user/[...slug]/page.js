@@ -22,7 +22,7 @@ export default function page({ params }) {
                 let day = daysofWeek[date.getDay()];
                 const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 
-                fetch(' https://back-end.nikhilharisinghani26.workers.dev/getAvailabilityOnADay', {
+                fetch(' https://back-end.nikhilharisinghani26.workers.dev/availability/day', {
 
                     method: "POST",
                     body: JSON.stringify({
@@ -83,14 +83,6 @@ export default function page({ params }) {
         checkUserExists();
     }, [])
 
-    let addSpaceForTimings = 0;
-
-    if (adj.length) {
-        addSpaceForTimings = 60
-    } else {
-        addSpaceForTimings = 80
-    }
-
     return (
         <div>
             {
@@ -105,14 +97,20 @@ export default function page({ params }) {
                         </>
                         :
                         <>
-                            <h1 className="font-extrabold text-4xl ml-10 mb-10">
+                            <h1 className="font-extrabold text-4xl ml-10 mb-10 
+                            xsm:text-3xl xxsm:text-3xl">
                                 Book A Call
                             </h1>
 
                             <div className="flex justify-center items-center">
-                                <div className={`w-[${addSpaceForTimings}vw] h-[67vh] bg-white shadow-2xl p-9 rounded-lg z-2 flex flex-row`}>
+                                <div
+                                    className={`w-auto bg-white shadow-2xl p-9 rounded-lg z-2 flex 
+                                    md:flex-row sm:flex-col md:h-[60vh] sm:h-auto sm:max-h-auto
+                                    xsm:flex-col xsm:h-auto xsm:max-h-auto
+                                    xxsm:flex-col xxsm:h-auto xxsm:max-h-auto`
+                                    }>
 
-                                    <div className="flex flex-col w-[22vw]">
+                                    <div className="flex flex-col lg:w-[22vw]">
                                         <h2 className="text-xl text-black-400/25">{params.slug[0]}</h2>
                                         <h1 className="text-3xl text-black-400/50">30 Min Meeting</h1>
                                         <h2 className="text-xl text-black-400/25">Select Date and Time</h2>
@@ -127,10 +125,10 @@ export default function page({ params }) {
                                         />
                                     </div>
 
-                                    <div className="flex flex-col text-center flex-1 overflow-y-auto pr-2">
+                                    <div className="flex flex-col text-center flex-1 overflow-y-auto pr-2 sm:max-h-[55vh] xsm:max-h-[30vh] xxsm:max-h-[30vh]">
                                         {
                                             adj.map((ele, idx) =>
-                                                <button className="border-double border-black border-2 w-[80px] mx-auto mb-2 p-2 pr-3 pl-3" key={idx}
+                                                <button className="border-double border-black border-2 w-[200px] mx-auto mb-2 pr-3 pl-3" key={idx}
 
                                                     onClick={(e) => {
                                                         e.preventDefault();
@@ -146,9 +144,9 @@ export default function page({ params }) {
                                             )
                                         }
                                     </div>
+
                                 </div>
                             </div>
-
                         </>
             }
         </div>

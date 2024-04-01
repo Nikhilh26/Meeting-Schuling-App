@@ -22,7 +22,9 @@ export async function handleOverRideAvailability(ctx: Context) {
                 "message": "Invalid Token",
                 "success": true
             })
-
+        
+        console.log(payload);
+        
         await db.delete(userAvailability).where(and(eq(userAvailability.userId, userId), eq(userAvailability.date, payload.date)));
 
         await Promise.all(payload.availabilityTimeRange.map(async (ele) => {
