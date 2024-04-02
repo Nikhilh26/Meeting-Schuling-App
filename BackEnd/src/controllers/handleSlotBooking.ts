@@ -25,7 +25,7 @@ function getEndTime(time: string) {
 export async function handleSlotBooking(ctx: Context) {
     try {
         const { payload }:
-            { payload: { date: string, startTime: string, clientEmailId: string, slug: string, eventDescription: string } }
+            { payload: { date: string, startTime: string, clientEmailId: string, slug: string, eventDescription: string, eventType: string } }
             = await ctx.req.json();
 
         const emailId = await db.select().from(users).where(eq(users.slug, payload.slug));
@@ -46,7 +46,8 @@ export async function handleSlotBooking(ctx: Context) {
             endTime,
             clientEmailId: payload.clientEmailId,
             bookedDate: payload.date,
-            eventDescription: payload.eventDescription
+            eventDescription: payload.eventDescription,
+            eventType: payload.eventType
         })
 
         // await handleMailScheduling(emailId[0].email, payload.clientEmailId, payload.date, payload.startTime);

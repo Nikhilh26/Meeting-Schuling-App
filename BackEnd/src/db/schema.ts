@@ -36,10 +36,11 @@ export const userWeeklyAvailability = pgTable("userWeeklyAvailability", {
 // this db only stores slots that are used
 export const userBookedSlots = pgTable('userBookedSlots', {
     userId: text('email').references(() => users.userId),
-    clientEmailId: text('clientEmailId').notNull(),
+    clientEmailId: text('clientEmailId'),
     startTime: time('bookedFrom').notNull(),
     endTime: time('bookedTill').notNull(),
     bookedDate: date('bookedDate').notNull(),
     eventDescription: text("eventDescription"),
+    eventType: text("eventType"),
     eventId: serial('eventId').primaryKey(),
 })
