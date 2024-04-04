@@ -11,7 +11,7 @@ export const publicKey = "-----BEGIN PUBLIC KEY-----\n" + splitPem.join("\n") + 
 
 export async function handleUserRegistration(c: Context) {
     try {
-        const { slug, email, token } = await c.req.json();
+        const { slug, email, token, userName } = await c.req.json();
         const isValidToken = await jwt.verify(token, publicKey, "RS256");
         const decodedToken: any = jwt.decode(token)
         const userId = decodedToken.payload.sub;
@@ -26,15 +26,11 @@ export async function handleUserRegistration(c: Context) {
                 })
             }
 
-            // console.log(email);
-            // console.log(slug);
-            // console.log(userId);
-
-
             await db.insert(users).values({
                 email,
                 slug,
                 userId,
+                userName
             })
 
             return c.json({

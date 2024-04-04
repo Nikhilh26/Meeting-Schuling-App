@@ -11,6 +11,7 @@ import { handleUpstashQueueMessage } from "./controllers/handleOnIncomingQueueMe
 import { handleUserExistenceCheck } from "./controllers/handleUserExistenceCheck";
 import { handleAvailabilityOfDay } from "./controllers/handleAvailabilityOfDay";
 import { handleOverRideAvailability } from "./controllers/handleOverRideAvailability";
+import { handleCheckSlugAvailability } from "./controllers/handleCheckSlugAvailability";
 
 const str = "postgresql://nikhilharisinghani26:IK7XE5LvhatP@ep-shy-forest-a1gcnxek.ap-southeast-1.aws.neon.tech/Calendly-Clone?sslmode=require"
 
@@ -26,6 +27,9 @@ app.get('/', (c) => {
 
 //Registration of a user and its entry in db
 app.post('/register', handleUserRegistration); // Integration done
+
+//This Endpoint checks for availability of slug 
+app.post('/user/checkAvailability', handleCheckSlugAvailability)
 
 // Login Authentication
 app.post('/login', handleLogin) // Integration Done
@@ -50,6 +54,9 @@ app.get('/availability/day', handleAvailabilityOfDay); // Integration Done
 
 // Updates UserAvailability Table
 app.post('/availability/overRide', handleOverRideAvailability)
+
+
+
 
 app.notFound((c) => {
 	c.status(404);

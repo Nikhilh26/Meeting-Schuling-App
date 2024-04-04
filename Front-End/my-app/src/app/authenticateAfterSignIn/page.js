@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from 'next/navigation'
 import { useClerk } from "@clerk/nextjs";
@@ -10,7 +10,7 @@ export default function page() {
     const { signOut } = useClerk();
     const router = useRouter();
     const { getToken, userId } = useAuth()
-    const [loading, setLoading] = useState();
+
     useEffect(() => {
         async function handleLogin() {
             try {
@@ -25,12 +25,13 @@ export default function page() {
 
                 if (resp.ok) {
                     const data = await resp.json();
-                    console.log(data);
+                    // console.log(data);
                     if (data.success) {
-                        console.log('onSucess')
-                        router.push('/events')
+                        console.log('User succesfully authenticated from backend @authenticateAfterSignIn/Page.js');
+                        router.push('/')
                     } else {
-                        console.log('nosuccess');
+                        console.log('User does not exist in backend @authenticateAfterSignIn/Page.js');
+                        // SignUp first
                         const redirectTo = data.redirect
                         signOut(() => router.push(`/${redirectTo}`))
                     }
@@ -39,7 +40,7 @@ export default function page() {
                     throw new Error("Something went wrong")
                 }
             } catch (error) {
-
+                console.log('something went wrong in backend @authenticateAfterSignIn/Page.js');
                 signOut(() => router.push('/'))
             }
         }
@@ -47,8 +48,8 @@ export default function page() {
         handleLogin();
     })
 
-    console.log(userId);
+    // console.log(userId);
     return (
-        <div>authenticateAfterSignIn</div>
+        <div>Loading .........</div>
     )
 }
