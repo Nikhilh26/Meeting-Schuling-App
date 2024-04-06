@@ -1,29 +1,14 @@
+import HomePageComponent from "@/components/HomePageComponent"
 export default function page() {
-
   return (
     <div>
       <div className='mt-[10vh] text-center'>
-        <div>
-          <h1 className='text-4xl font-extrabold mt-8'>
-            Welcome Back , <p></p>
-          </h1>
+        <HomePageComponent />
 
-          <div className='mt-[2vh]'>
-            <span className='border-2 p-1 border-black max-w-[1vw]'>
-              http://localhost:3000/nikhilharisinghani26
-            </span>
-
-
-          </div>
-
-          <div className='text-xl text-gray-500 font-bold ml-4 mt-[2vh]' >
-            Share the above Link with the person who wants to schedule meeting
-          </div>
-
+        <div className='text-xl text-gray-500 font-bold ml-4 mt-[2vh]' >
+          Share the above Link with the person who wants to schedule meeting
         </div>
-        <h1 className='text-2xl font-extrabold'>
-          SignUp / Login First
-        </h1>
+
       </div>
 
       <div className='text-2xl mt-[5vh] text-center font-extrabold mb-[3vh]'>

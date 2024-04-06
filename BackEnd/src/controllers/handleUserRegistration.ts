@@ -22,7 +22,7 @@ export async function handleUserRegistration(c: Context) {
             if (checkInUsersDB.length) {
                 return c.json({
                     "message": "User Already Exists",
-                    "success": true
+                    "success": false
                 })
             }
 
@@ -40,8 +40,8 @@ export async function handleUserRegistration(c: Context) {
 
         } else {
             return c.json({
-                "message": "Invalid Token",
-                "success": true
+                "message": "Please Enter your name again",
+                "success": false
             })
         }
     } catch (error) {

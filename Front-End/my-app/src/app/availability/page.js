@@ -1,6 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
 import { useAuth } from "@clerk/nextjs";
+import { useRouter } from 'next/navigation';
 import { SpecificHours } from "./specificHours";
 import OverRideForm from "./OverRideForm";
 import MainFormHeader from "./MainFormHeader";
@@ -32,8 +33,10 @@ export default function page() {
         'SAT': [[["09:00", "17:00"]], false],
     })
 
+    // clerk.dev/utility variables
     const { getToken } = useAuth()
-
+    const router = useRouter()
+    // extract logic to useReducer
     function handleAvailabilityAddSlot(day) {
         let tempAvailability = { ...availability };
         tempAvailability[day][0].push(["09:00", "17:00"]);
@@ -133,6 +136,7 @@ export default function page() {
 
         getTiming();
     }, [])
+
     // For User experience
     useEffect(() => {
         setLoading((prev) => prev + 1);
@@ -142,7 +146,7 @@ export default function page() {
         setLoading((prev) => prev + 1);
     }, [availability])
 
-    const handleOnClick = async () => {
+    const handleOnClickUpdate = async () => {
         const token = await getToken();
         fetch('https://back-end.nikhilharisinghani26.workers.dev/weekly-schedule/update', {
             method: "PUT",
@@ -155,6 +159,11 @@ export default function page() {
         }).then(async (data) => {
             return await data.json()
         }).then((data) => {
+            if (!data.success && data.redirect) {
+                router.push('/authenticateAfterSignUp');
+            } else {
+                alert(data.message);
+            }
             confirm(data.success);
         })
     }
@@ -188,7 +197,7 @@ export default function page() {
                                                 availability={availability}
                                             />
                                             <div>
-                                                <button style={btnClass} onClick={handleOnClick}> Update </button>
+                                                <button style={btnClass} onClick={handleOnClickUpdate}> Update </button>
                                             </div>
                                         </>
                                         :

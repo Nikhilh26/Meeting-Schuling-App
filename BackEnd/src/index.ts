@@ -2,15 +2,15 @@ import { Hono } from "hono";
 import { cors } from 'hono/cors';
 import { drizzle } from 'drizzle-orm/neon-http';
 import { neon } from '@neondatabase/serverless';
-import { handleUserRegistration } from "./controllers/handleUserRegistration";
 import { handleLogin } from "./controllers/handleLogin";
-import { handleWeeklyScheduleUpdate } from "./controllers/handleWeeklyScheduleUpdate";
-import { handleGetAvailability } from "./controllers/handleGetAvailability ";
 import { handleSlotBooking } from "./controllers/handleSlotBooking";
-import { handleUpstashQueueMessage } from "./controllers/handleOnIncomingQueueMesaage";
-import { handleUserExistenceCheck } from "./controllers/handleUserExistenceCheck";
+import { handleGetAvailability } from "./controllers/handleGetAvailability ";
+import { handleUserRegistration } from "./controllers/handleUserRegistration";
 import { handleAvailabilityOfDay } from "./controllers/handleAvailabilityOfDay";
+import { handleUserExistenceCheck } from "./controllers/handleUserExistenceCheck";
+import { handleUpstashQueueMessage } from "./controllers/handleOnIncomingQueueMesaage";
 import { handleOverRideAvailability } from "./controllers/handleOverRideAvailability";
+import { handleWeeklyScheduleUpdate } from "./controllers/handleWeeklyScheduleUpdate";
 import { handleCheckSlugAvailability } from "./controllers/handleCheckSlugAvailability";
 
 const str = "postgresql://nikhilharisinghani26:IK7XE5LvhatP@ep-shy-forest-a1gcnxek.ap-southeast-1.aws.neon.tech/Calendly-Clone?sslmode=require"

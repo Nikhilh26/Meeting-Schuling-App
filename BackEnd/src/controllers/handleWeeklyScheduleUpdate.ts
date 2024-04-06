@@ -1,7 +1,6 @@
-// handled
 import { Context } from "hono";
 import { publicKey } from "./handleUserRegistration";
-import { userWeeklyAvailability } from "../db/schema";
+import { userWeeklyAvailability, users } from "../db/schema";
 import { db } from "..";
 import jwt from '@tsndr/cloudflare-worker-jwt'
 import { and, eq } from "drizzle-orm";
@@ -26,15 +25,15 @@ export async function handleWeeklyScheduleUpdate(ctx: Context) {
 
         const isValidToken = await jwt.verify(token, publicKey, "RS256");
 
-        if (!isValidToken) {
+        const decodedToken = jwt.decode<{ payload: { sub: string } }, {}>(token)
+        const userId = decodedToken.payload?.payload.sub;
+
+        if (typeof (userId) === "undefined" || !isValidToken) {
             return ctx.json({
                 "Message": "Invalid Token",
                 "success": false
             })
         }
-
-        const decodedToken: any = jwt.decode(token)
-        const userId = decodedToken.payload.sub;
 
         console.log(payload);
         console.log(isValidToken);
@@ -43,9 +42,18 @@ export async function handleWeeklyScheduleUpdate(ctx: Context) {
         let todaysDate = new Date().toISOString().split('T')[0];
         const keys: DayOfWeek[] = Object.keys(payload) as DayOfWeek[];
 
+        const checkUserExistence = await db.select().from(users).where(eq(users.userId, userId))
+
+        if (checkUserExistence.length === 0) {
+            return ctx.json({
+                "message": "User has logged in but has not entered credentials",
+                "redirect": true,
+                "success": false
+            })
+        }
+
         await Promise.all(keys.map(async (day: DayOfWeek) => {
-            //@ts-ignore
-            await db.delete(userWeeklyAvailability).where(and(eq(userId, userWeeklyAvailability.userId), eq(day, userWeeklyAvailability.day)))
+            await db.delete(userWeeklyAvailability).where(and(eq(userWeeklyAvailability.userId, userId), eq(userWeeklyAvailability.day, day)))
         }))
 
         await Promise.all(keys.map(async (day: DayOfWeek) => {
