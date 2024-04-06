@@ -4,11 +4,6 @@ export default function page() {
     <div>
       <div className='mt-[10vh] text-center'>
         <HomePageComponent />
-
-        <div className='text-xl text-gray-500 font-bold ml-4 mt-[2vh]' >
-          Share the above Link with the person who wants to schedule meeting
-        </div>
-
       </div>
 
       <div className='text-2xl mt-[5vh] text-center font-extrabold mb-[3vh]'>
@@ -36,6 +31,10 @@ export default function page() {
         <div className='mb-5'>
           This website requires access to your google calendar to make the integration more easy and
           to reduce your load
+        </div>
+
+        <div>
+          You need to Login and setup you name access the page
         </div>
       </div>
 

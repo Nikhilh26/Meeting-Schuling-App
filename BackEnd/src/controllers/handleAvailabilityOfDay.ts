@@ -63,8 +63,7 @@ export async function handleAvailabilityOfDay(ctx: Context) {
     try {
         const { slug, day, formattedDate }: { slug: string, day: any, formattedDate: string } = await ctx.req.json();
 
-        // @ts-ignore
-        const checkSpecificUserAvailability = await db.select().from(userAvailability).innerJoin(users, eq(users.userId, userAvailability.userId)).where(and(eq(formattedDate, userAvailability.date), eq(slug, users.slug)));
+        const checkSpecificUserAvailability = await db.select().from(userAvailability).innerJoin(users, eq(users.userId, userAvailability.userId)).where(and(eq(userAvailability.date, formattedDate), eq(users.slug, slug)));
         let availabilityRange: Array<[string, string]> = [];
 
         if (checkSpecificUserAvailability.length === 0) {

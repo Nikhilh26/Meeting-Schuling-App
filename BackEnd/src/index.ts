@@ -4,7 +4,6 @@ import { drizzle } from 'drizzle-orm/neon-http';
 import { neon } from '@neondatabase/serverless';
 import { handleLogin } from "./controllers/handleLogin";
 import { handleSlotBooking } from "./controllers/handleSlotBooking";
-import { handleGetAvailability } from "./controllers/handleGetAvailability ";
 import { handleUserRegistration } from "./controllers/handleUserRegistration";
 import { handleAvailabilityOfDay } from "./controllers/handleAvailabilityOfDay";
 import { handleUserExistenceCheck } from "./controllers/handleUserExistenceCheck";
@@ -12,6 +11,7 @@ import { handleUpstashQueueMessage } from "./controllers/handleOnIncomingQueueMe
 import { handleOverRideAvailability } from "./controllers/handleOverRideAvailability";
 import { handleWeeklyScheduleUpdate } from "./controllers/handleWeeklyScheduleUpdate";
 import { handleCheckSlugAvailability } from "./controllers/handleCheckSlugAvailability";
+import { handleGetAvailability, handleGetUserNameAndSlug } from "./controllers/handleGetAvailability ";
 
 const str = "postgresql://nikhilharisinghani26:IK7XE5LvhatP@ep-shy-forest-a1gcnxek.ap-southeast-1.aws.neon.tech/Calendly-Clone?sslmode=require"
 
@@ -55,8 +55,8 @@ app.get('/availability/day', handleAvailabilityOfDay); // Integration Done
 // Updates UserAvailability Table
 app.post('/availability/overRide', handleOverRideAvailability)
 
-
-
+// Returns UserName and slug 
+app.get('/user/getNameAndSlug', handleGetUserNameAndSlug)
 
 app.notFound((c) => {
 	c.status(404);
