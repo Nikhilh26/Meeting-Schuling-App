@@ -42,8 +42,8 @@ export async function handleSlotBooking(ctx: Context) {
 
         await db.insert(userBookedSlots).values({
             userId,
-            startTime: payload.startTime,
-            endTime,
+            bookedFrom: payload.startTime,
+            bookedTill: endTime,
             clientEmailId: payload.clientEmailId,
             bookedDate: payload.date,
             eventDescription: payload.eventDescription,

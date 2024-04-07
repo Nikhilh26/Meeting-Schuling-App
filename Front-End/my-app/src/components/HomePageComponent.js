@@ -14,7 +14,7 @@ export default function HomePageComponent() {
 
         async function handleGetRequest() {
             const token = await getToken();
-            fetch('http://localhost:8787/user/getNameAndSlug', {
+            fetch('http://localhost:8787/user/NameAndSlug', {
                 headers: {
                     'Authorization': token
                 }
@@ -44,7 +44,7 @@ export default function HomePageComponent() {
                 {
                     name.length ?
                         <>
-                            Welcome Back , <p>{name}</p>
+                            Welcome Back , <span>{name}</span>
                         </>
                         :
                         <>SingUp/SignIn</>
@@ -55,7 +55,7 @@ export default function HomePageComponent() {
                 name.length > 0
                 &&
                 <>
-                    <div className="mt-2">
+                    <div className="mt-[8vh]">
                         <span className='border-2 p-1 border-black'>
                             http://localhost:3000/{slug}
                         </span>
@@ -67,7 +67,7 @@ export default function HomePageComponent() {
                             Copy
                         </button>
                     </div>
-                    <div className='text-xl text-gray-500 font-bold ml-4 mt-[2vh]' >
+                    <div className='text-xl text-gray-500 font-bold ml-4 mt-[8vh]' >
                         Share the above Link with the person who wants to schedule meeting
                     </div>
                 </>

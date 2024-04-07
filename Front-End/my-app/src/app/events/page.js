@@ -1,6 +1,41 @@
 import { EventCard } from "./EventCard"
+import { auth } from '@clerk/nextjs';
 
-export default function page() {
+async function fetchEvents() {
+    console.log('fetching data................');
+    try {
+        const { getToken } = auth()
+        const token = await getToken();
+
+        const resp = await fetch('http://localhost:8787/user/events', {
+            headers: {
+                'Authorization': token
+            }
+        });
+
+        if (resp.ok) {
+            let respJson = await resp.json();
+            console.log(respJson.success);
+            if (respJson.success) {
+                return respJson;
+            } else {
+                console.log('Error');
+            }
+
+        } else {
+            console.log('Response not ok')
+        }
+
+
+    } catch (error) {
+        console.log('Erroorrr................')
+        console.log(error);
+    }
+}
+
+export default async function page() {
+    const { prevEvents, upcomingEvents } = fetchEvents();
+
     return (
         <div>
             <div className="p-2">
