@@ -22,10 +22,11 @@ const sql = neon(str);
 export const db = drizzle(sql);
 app.use('/*', cors());
 
-app.get('/', (c) => {
-	return c.text("Hello World")
-})
 
+app.use('*', async (ctx, next) => {
+	console.log('Incoming Requests');
+	await next();
+})
 //Registration of a user and its entry in db
 app.post('/register', handleUserRegistration); // Integration done
 
