@@ -5,8 +5,10 @@ import { eq } from "drizzle-orm";
 
 export async function handleUserExistenceCheck(ctx: Context) {
     try {
-        const { slug }: { slug: string } = await ctx.req.json();
-        const usersExists = await db.select().from(users).where(eq(users.slug, slug))
+        const reqParams = new URLSearchParams(ctx.req.url.split('?')[1]);
+        const slug = reqParams.get('slug');
+        const usersExists = await db.select().from(users).where(eq(users.slug, slug as string));
+
         if (usersExists.length)
             return ctx.json({
                 "message": "User Exists",

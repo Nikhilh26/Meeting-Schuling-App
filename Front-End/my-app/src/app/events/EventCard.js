@@ -4,7 +4,7 @@ export function EventCard({ payload }) {
             {
                 payload.map((ele, _) => {
                     return (
-                        <div className="min-w-[20%] p-8 border-t-8 border-t-purple-600 shadow-lg rounded-lg m-2" key={ele.eventId}>
+                        <div className="md:max-w-[40vw] p-8 border-t-8 border-t-purple-600 shadow-lg rounded-lg m-2" key={ele.eventId}>
                             <h1 className="font-bold">
                                 Event Type
                                 (ToAdd)

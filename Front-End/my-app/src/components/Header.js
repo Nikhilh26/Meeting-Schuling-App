@@ -19,13 +19,13 @@ export default function Header() {
                     {
                         !userId ?
                             <div>
-                                <Link href='/sign-in' className='pr-5'>LogIn</Link>
-                                <Link href='/sign-up'>SignUp</Link>
+                                <Link prefetch={false} href='/sign-in' className='pr-5'>LogIn</Link>
+                                <Link prefetch={false} href='/sign-up'>SignUp</Link>
                             </div>
                             :
                             <div className='flex'>
-                                <Link href='/availability' className='mr-3'>Availability</Link>
-                                <Link href='/events' className='mr-3'>Events</Link>
+                                <Link prefetch={false} href='/availability' className='mr-3'>Availability</Link>
+                                <Link prefetch={false} href='/events' className='mr-3'>Events</Link>
                                 <UserButton afterSignOutUrl='/' />
                             </div>
                     }

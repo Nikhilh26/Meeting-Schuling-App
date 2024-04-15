@@ -12,7 +12,7 @@ import { handleUpstashQueueMessage } from "./controllers/handleOnIncomingQueueMe
 import { handleOverRideAvailability } from "./controllers/handleOverRideAvailability";
 import { handleWeeklyScheduleUpdate } from "./controllers/handleWeeklyScheduleUpdate";
 import { handleCheckSlugAvailability } from "./controllers/handleCheckSlugAvailability";
-import { handleGetAvailability, handleGetUserNameAndSlug } from "./controllers/handleGetAvailability ";
+import { handleGetAvailability } from "./controllers/handleGetAvailability ";
 
 const str = "postgresql://nikhilharisinghani26:IK7XE5LvhatP@ep-shy-forest-a1gcnxek.ap-southeast-1.aws.neon.tech/Calendly-Clone?sslmode=require"
 
@@ -34,7 +34,7 @@ app.post('/register', handleUserRegistration); // Integration done
 app.post('/user/slug/availability', handleCheckSlugAvailability)
 
 // Login Authentication
-app.post('auth/login', handleLogin) // Integration Done
+app.post('/auth/login', handleLogin) // Integration Done
 
 // Update weekly schedule of a person
 app.put('/weekly-schedule', handleWeeklyScheduleUpdate); //Changes Done
@@ -49,19 +49,19 @@ app.post('/bookings', handleSlotBooking); // Integration Done and (Google API in
 app.post('/', handleUpstashQueueMessage) // changes to be made
 
 //Check wether /{user_slug} this exist or not
-app.post('/user/exist', handleUserExistenceCheck); // Integration Done
+app.get('/user/exist', handleUserExistenceCheck); // Integration Done
 
 //Fetches availability of a user using Slug for the given Day which used to schedule call
-app.get('/availability/day', handleAvailabilityOfDay); // Integration Done
+app.post('/availability/day', handleAvailabilityOfDay); // Integration Done
 
 // Updates UserAvailability Table
 app.post('/availability/overRide', handleOverRideAvailability)
 
 // Returns UserName and slug 
-app.get('/user/NameAndSlug', handleGetUserNameAndSlug)
+// app.get('/user/NameAndSlug', handleGetUserNameAndSlug); // reduntant
 
 // Returns all the events of a person using a token
-app.get('user/events', handleGetUserMeetings)
+app.get('/user/events', handleGetUserMeetings)
 
 app.notFound((c) => {
 	c.status(404);

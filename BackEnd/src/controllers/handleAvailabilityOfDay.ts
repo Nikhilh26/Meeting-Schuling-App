@@ -96,7 +96,7 @@ export async function handleAvailabilityOfDay(ctx: Context) {
         let bookedIntervals: any[] = []
 
         bookedIntervalsDB.forEach((tuple) => {
-            bookedIntervals.push({ start: tuple.userBookedSlots.startTime, end: tuple.userBookedSlots.endTime })
+            bookedIntervals.push({ start: tuple.userBookedSlots.bookedFrom, end: tuple.userBookedSlots.bookedTill })
         })
 
         const returnPayload = getNonIntersectingIntervals(allIntervals, bookedIntervals);

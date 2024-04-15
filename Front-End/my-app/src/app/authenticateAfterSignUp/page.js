@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { useAuth, useUser } from "@clerk/nextjs";
 import { useRouter } from 'next/navigation';
 import { useClerk } from "@clerk/nextjs";
+// This is will make a lot of calls to backend it wont scale try using redis maybe or use server caching only
 
 export default function page() {
     const [slug, setSlug] = useState('')
@@ -46,12 +47,15 @@ export default function page() {
     }
 
     useEffect(() => {
+
         if (slug.length <= 3) return () => { };
         setIsLoading(true);
+
         let abortRequest = new AbortController();
         const signal = abortRequest.signal;
         let complete = false;
-        fetch('http://localhost:8787/user/checkAvailability', {
+
+        fetch('http://localhost:8787/user/slug/availability', {
             method: 'POST',
             body: JSON.stringify({
                 slug
@@ -94,6 +98,7 @@ export default function page() {
             <div className="mt-[70px] w-[60%] m-auto">
 
                 <div className="flex flex-col">
+
                     <div className="mb-3 w-[100%]">
                         <input
                             placeholder="Enter Slug (Should be Unique)"

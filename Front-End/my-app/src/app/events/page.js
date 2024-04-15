@@ -1,5 +1,6 @@
 import { EventCard } from "./EventCard"
 import { auth } from '@clerk/nextjs';
+import Link from 'next/link';
 
 async function fetchEvents() {
     console.log('fetching data................');
@@ -32,7 +33,10 @@ async function fetchEvents() {
         } else {
             console.log('Response not ok')
         }
-
+        return {
+            prevEvents: null,
+            upcomingEvents: null
+        }
     } catch (error) {
         console.log('Error................')
         console.log(error);
@@ -53,9 +57,9 @@ export default async function page() {
             <div>
                 <div className="p-2">
                     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-full shadow-sm">
-                        <a href="/add-event">
+                        <Link href="/events/form">
                             Add Event
-                        </a>
+                        </Link>
                     </button>
                 </div>
 
