@@ -12,7 +12,7 @@ import { handleUpstashQueueMessage } from "./controllers/handleOnIncomingQueueMe
 import { handleOverRideAvailability } from "./controllers/handleOverRideAvailability";
 import { handleWeeklyScheduleUpdate } from "./controllers/handleWeeklyScheduleUpdate";
 import { handleCheckSlugAvailability } from "./controllers/handleCheckSlugAvailability";
-import { handleGetAvailability } from "./controllers/handleGetAvailability ";
+import { handleGetAvailability, handleGetUserNameAndSlug } from "./controllers/handleGetAvailability ";
 
 const str = "postgresql://nikhilharisinghani26:IK7XE5LvhatP@ep-shy-forest-a1gcnxek.ap-southeast-1.aws.neon.tech/Calendly-Clone?sslmode=require"
 
@@ -58,7 +58,7 @@ app.post('/availability/day', handleAvailabilityOfDay); // Integration Done
 app.post('/availability/overRide', handleOverRideAvailability)
 
 // Returns UserName and slug 
-// app.get('/user/NameAndSlug', handleGetUserNameAndSlug); // reduntant
+app.get('/user/NameAndSlug', handleGetUserNameAndSlug);
 
 // Returns all the events of a person using a token
 app.get('/user/events', handleGetUserMeetings)

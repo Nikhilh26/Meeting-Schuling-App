@@ -92,44 +92,47 @@ export async function handleGetAvailability(ctx: Context) {
 
 }
 
-// export async function handleGetUserNameAndSlug(ctx: Context) {
-//     try {
-//         const token = ctx.req.header('Authorization');
+export async function handleGetUserNameAndSlug(ctx: Context) {
+    try {
+        const token = ctx.req.header('Authorization');
 
-//         if (typeof (token) === "undefined")
-//             return ctx.json({
-//                 "message": "Token not present",
-//                 "success": false
-//             })
+        if (typeof (token) === "undefined")
+            return ctx.json({
+                "message": "Token not present",
+                "success": false
+            })
 
-//         const isValidToken = await jwt.verify(token, publicKey, "RS256");
-//         const decodedToken: any = jwt.decode(token)
-//         const userId = decodedToken.payload.sub;
-//         if (!isValidToken) {
+        const isValidToken = await jwt.verify(token, publicKey, "RS256");
+        const decodedToken: any = jwt.decode(token)
+        const userId = decodedToken.payload.sub;
+        if (!isValidToken) {
+            return ctx.json({
+                'message': 'Token validation failed',
+                'success': false
+            })
+        }
 
-//         }
+        const nameAndSlug = await db.select().from(users).where(eq(users.userId, userId));
 
-//         const nameAndSlug = await db.select().from(users).where(eq(users.userId, userId));
+        if (nameAndSlug.length === 0) {
+            return ctx.json({
+                'message': 'User not Found',
+                'success': false,
+                'redirect': true
+            })
+        } else {
+            return ctx.json({
+                'success': true,
+                name: nameAndSlug[0].userName,
+                slug: nameAndSlug[0].slug
+            })
+        }
+    } catch (error) {
+        console.log(error);
 
-//         if (nameAndSlug.length === 0) {
-//             return ctx.json({
-//                 'message': 'User not Found',
-//                 'success': false,
-//                 'redirect': true
-//             })
-//         } else {
-//             return ctx.json({
-//                 'success': true,
-//                 name: nameAndSlug[0].userName,
-//                 slug: nameAndSlug[0].slug
-//             })
-//         }
-//     } catch (error) {
-//         console.log(error);
-
-//         return ctx.json({
-//             "message": "Something went wrong",
-//             "success": false
-//         })
-//     }
-// }
+        return ctx.json({
+            "message": "Something went wrong",
+            "success": false
+        })
+    }
+}

@@ -3,6 +3,7 @@ import { db } from "..";
 import { userAvailability, userBookedSlots, userWeeklyAvailability, users } from "../db/schema";
 import { and, eq } from "drizzle-orm";
 
+// meeting duration is 30 mins hardcoded for now will definetly work on it
 function generateIntervals(startTime: any, endTime: any, intervalMinutes = 30) {
 
     const intervals = [];
@@ -61,14 +62,18 @@ function getNonIntersectingIntervals(intervals1: any, intervals2: any) {
 
 export async function handleAvailabilityOfDay(ctx: Context) {
     try {
-        const { slug, day, formattedDate }: { slug: string, day: any, formattedDate: string } = await ctx.req.json();
+        const { userId, day, formattedDate }: { userId: string, day: any, formattedDate: string } = await ctx.req.json();
 
-        const checkSpecificUserAvailability = await db.select().from(userAvailability).innerJoin(users, eq(users.userId, userAvailability.userId)).where(and(eq(userAvailability.date, formattedDate), eq(users.slug, slug)));
+        // This query checks whether there is an over-ridden availability or not 
+        const checkSpecificUserAvailability = await db.select().from(userAvailability).innerJoin(users, eq(users.userId, userAvailability.userId)).where(and(eq(userAvailability.date, formattedDate), eq(users.userId, userId)));
+
         let availabilityRange: Array<[string, string]> = [];
-
+        // console.log(checkSpecificUserAvailability);
+        console.log(userId)
         if (checkSpecificUserAvailability.length === 0) {
-            const userData = await db.select().from(users).innerJoin(userWeeklyAvailability, eq(userWeeklyAvailability.userId, users.userId)).where(and(eq(users.slug, slug), eq(day, userWeeklyAvailability.day)));
-
+            // If the availability is not over-ridden we can use Weekly availability set by user
+            const userData = await db.select().from(users).innerJoin(userWeeklyAvailability, eq(userWeeklyAvailability.userId, users.userId)).where(and(eq(users.userId, userId), eq(day, userWeeklyAvailability.day)));
+            // this is done to get all weekly availabilities defined and we can apply interval intersection algo 
             userData.map((ele) => {
 
                 if (ele.userWeeklyAvailability.availableFrom && ele.userWeeklyAvailability.availableTill)
@@ -76,7 +81,7 @@ export async function handleAvailabilityOfDay(ctx: Context) {
 
             })
         } else {
-
+            // this is done to get all overriden weekly availabilities defined and we can apply interval intersection algo 
             checkSpecificUserAvailability.map((ele) => {
 
                 if (ele.userAvailability.startTime && ele.userAvailability.endTime)
@@ -90,15 +95,17 @@ export async function handleAvailabilityOfDay(ctx: Context) {
         availabilityRange.map((ele) => {
             allIntervals = [...allIntervals, ...generateIntervals(ele[0], ele[1])]
         })
-
-        const bookedIntervalsDB = await db.select().from(users).innerJoin(userBookedSlots, eq(users.userId, userBookedSlots.userId)).where(and(eq(users.slug, slug), eq(userBookedSlots.bookedDate, formattedDate)))
-
+        // all the booked intervals on that day are fetched
+        const bookedIntervalsDB = await db.select().from(users).innerJoin(userBookedSlots, eq(users.userId, userBookedSlots.userId)).where(and(eq(users.userId, userId), eq(userBookedSlots.bookedDate, formattedDate)))
+        console.log(bookedIntervalsDB);
+        console.log(allIntervals)
         let bookedIntervals: any[] = []
-
+        // all those are arranged in {start,end} format
         bookedIntervalsDB.forEach((tuple) => {
             bookedIntervals.push({ start: tuple.userBookedSlots.bookedFrom, end: tuple.userBookedSlots.bookedTill })
         })
 
+        // intersection detection algorithm is used to generate all available spots
         const returnPayload = getNonIntersectingIntervals(allIntervals, bookedIntervals);
 
         return ctx.json({

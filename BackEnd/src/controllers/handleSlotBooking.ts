@@ -44,10 +44,10 @@ export async function handleSlotBooking(ctx: Context) {
             userId,
             bookedFrom: payload.startTime,
             bookedTill: endTime,
-            clientEmailId: payload.clientEmailId,
+            clientEmailId: payload?.clientEmailId === undefined ? '' : payload?.clientEmailId,
             bookedDate: payload.date,
             eventDescription: payload.eventDescription,
-            eventType: payload.eventType
+            eventType: payload?.eventType === undefined ? 'Added By Owner' : payload?.clientEmailId
         })
 
         // await handleMailScheduling(emailId[0].email, payload.clientEmailId, payload.date, payload.startTime);

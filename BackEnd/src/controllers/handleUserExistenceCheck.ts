@@ -12,7 +12,9 @@ export async function handleUserExistenceCheck(ctx: Context) {
         if (usersExists.length)
             return ctx.json({
                 "message": "User Exists",
-                "success": true
+                "success": true,
+                userId: usersExists[0].userId,
+                name: usersExists[0].userName?.length === 0 ? usersExists[0].slug : usersExists[0].slug
             })
 
         return ctx.json({
