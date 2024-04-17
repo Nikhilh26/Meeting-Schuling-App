@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 export const daysofWeek = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
 
-export default function UserAvailability({ userId, name }) {
+export default function UserAvailability({ userId, name, slug }) {
     // console.log(params);
     const router = useRouter();
     const [date, setDate] = useState(new Date());
@@ -98,9 +98,9 @@ export default function UserAvailability({ userId, name }) {
                                         const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
                                         console.log(formattedDate);
                                         console.log(e.currentTarget.innerHTML + ":00")
-                                        console.log(params.slug[0]);
+                                        console.log(slug);
 
-                                        router.push(`/form/${formattedDate}/${params.slug[0]}/${e.currentTarget.innerHTML}:00`);
+                                        router.push(`/form/${formattedDate}/${slug}/${e.currentTarget.innerHTML}:00`);
                                     }}>
                                     {ele?.start}
                                 </button>

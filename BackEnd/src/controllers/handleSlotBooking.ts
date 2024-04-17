@@ -24,11 +24,10 @@ function getEndTime(time: string) {
 
 export async function handleSlotBooking(ctx: Context) {
     try {
-        const { payload }:
-            { payload: { date: string, startTime: string, clientEmailId: string, slug: string, eventDescription: string, eventType: string } }
+        const { payload }: { payload: { date: string, startTime: string, clientEmailId: string, userId: string, eventDescription: string, eventType: string } }
             = await ctx.req.json();
 
-        const emailId = await db.select().from(users).where(eq(users.slug, payload.slug));
+        const emailId = await db.select().from(users).where(eq(users.userId, payload.userId));
 
         if (emailId.length === 0)
             return ctx.json({
@@ -36,12 +35,12 @@ export async function handleSlotBooking(ctx: Context) {
                 "success": false
             })
 
-        const userId = emailId[0].userId;
+        // const slug = emailId[0].slug;
 
         const endTime = getEndTime(payload.startTime);
 
         await db.insert(userBookedSlots).values({
-            userId,
+            userId: payload.userId,
             bookedFrom: payload.startTime,
             bookedTill: endTime,
             clientEmailId: payload?.clientEmailId === undefined ? '' : payload?.clientEmailId,
